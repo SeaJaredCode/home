@@ -1,0 +1,28 @@
+[user]
+    name = Jared Stiff
+    email = jstiff@commercehub.com
+[core]
+    autocrlf = false
+    excludesfile = ~/.gitignore
+    fscahce=true
+[include]
+    path=~/.gitalias
+[diff]
+    guitool = meld
+[difftool]
+    prompt = false
+[difftool "winmerge"]
+    cmd = winmerge \"$LOCAL\" \"$REMOTE\"
+[merge]
+    tool = p4merge
+[mergetool]
+    keepBackup = false
+[mergetool "p4merge"]
+    trustExitCode = false
+    cmd = p4merge -nb \"Common:\" -nl \"Your:\" -nr \"Their:\" -nm \"Resolved:\" \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+[push]
+    default = simple
+[rerere]
+    enabled = true
+[alias]
+	where = branch -r --contains

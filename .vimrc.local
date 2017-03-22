@@ -1,0 +1,10 @@
+"if !has("gui_running")
+"    let g:solarized_termcolors=16
+"    let g:airline_theme = "murmur"
+"endif
+
+let g:airline_powerline_fonts = 1
+
+colorscheme solarized
+set background=dark
+set viminfo+=n~/.vim/.viminfo

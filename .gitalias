@@ -1,0 +1,51 @@
+[alias]
+    st = status
+    a = add -A
+    b = branch
+    bc = branch --contains
+    bcr = branch -r --contains
+    f = fetch
+    m = merge
+    s = status
+    ci = commit
+    cin = commit --no-edit
+    ca = commit --amend
+    can = commit --amend --no-edit
+    co = checkout
+    cm = checkout -m
+    cp = cherry-pick
+    cb = "!f() {\
+            git checkout -b $1 origin/master;\
+        };f"
+    cbr = "!f() {\
+            gerrit_create_branch origin $1 master;\
+        };f"
+    cbs = "!f() {\
+            git cbr $1;\
+            git cb $1;\
+        };f"
+    cu = "!f() {\
+            git fetch; \
+            git checkout -B $1 origin/$1;\
+        };f"
+    l = !do_git_log $@
+    ls = log --oneline
+    lf = log --name-status
+    gdiff = difftool -g -d
+    gwdiff = difftool --tool=winmerge -d
+    wdiff = difftool --tool=winmerge
+    yolo = push -f
+    rpm = rebase --preserve-merges
+    rev = "!f() {\
+            gerrit_push_review $1; \
+        };f"
+    alias = "!f() {\
+            if [ -z $1 ] || [ -z $2 ]; \
+            then \
+                git config --get-regexp alias; \
+                echo '\nTo make alias: git alias <alias> <command>'; \
+            else \
+                git config --global alias.$1 $2; \
+            fi; \
+        };f"
+    l = !do_git_log

@@ -1,0 +1,15 @@
+#!/bin/bash
+n=1
+if ! [ -z $1 ]
+then
+    if [[ $1 =~ ^[0-9]+$ ]]
+    then
+        n=$1
+        b=$2
+    else
+        b=$1
+    fi
+fi
+
+git log -$n $b
+

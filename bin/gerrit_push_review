@@ -1,0 +1,14 @@
+#!/bin/sh
+if [ -z $1 ]; then BRANCH_NAME="$(git symbolic-ref --short HEAD 2>/dev/null)"; else BRANCH_NAME=$1;fi
+
+if [ -z $BRANCH_NAME ]
+then
+	echo "Head is detached. Destination branch must be specified."
+else
+    if [ `git ls-remote --heads origin $BRANCH_NAME | wc -l` -eq 0 ]
+    then 
+        echo "Branch not found. Creating $BRANCH_NAME from master"
+        gerrit_create_branch origin $BRANCH_NAME master
+    fi
+    git push origin HEAD:refs/for/$BRANCH_NAME;
+fi

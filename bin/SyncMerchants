@@ -1,0 +1,7 @@
+#!/bin/sh
+
+CreateScriptDB_Merchant
+
+ScriptDB -sync . Script_Merchant Merchant_BizarroNordstrom
+ScriptDB -sync . Script_Merchant Merchant_Prod_BCountry
+

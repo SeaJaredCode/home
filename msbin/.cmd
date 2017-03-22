@@ -1,0 +1,7 @@
+@ECHO OFF
+
+ECHO Loading VS variables...
+IF DEFINED VS140COMNTOOLS CALL "%VS140COMNTOOLS%\VsDevCmd.bat"
+ECHO Done.
+
+SET PATH=%HOME%\msbin;%PATH%

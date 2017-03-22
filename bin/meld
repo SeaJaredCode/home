@@ -1,0 +1,4 @@
+#!/bin/sh
+
+CMDLINE="C:\Program Files (x86)\Meld\Meld.exe"
+cmd //c "$CMDLINE" $@

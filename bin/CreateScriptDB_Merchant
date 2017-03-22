@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export PATH=/c/windows/system32:$PATH
+cmd //c "C:\git\main\Solution\Database\Merchant\CreateScriptDatabase.cmd"

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+[ $# -ne 2 ] && { echo "Usage: $0 <project name> <description>."; exit 1; }
+
+ssh -p 29418 gerrit 'gerrit create-project' --name $1 --description "$2"
+

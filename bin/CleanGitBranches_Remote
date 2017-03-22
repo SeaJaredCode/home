@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git branch -r --merged ${1-origin/master} | grep -Ev 'dev|master|release/next|release/current' | sed 's/origin\///g' | xargs -I {} -n 1 echo git push -f origin :{}

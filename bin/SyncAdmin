@@ -1,0 +1,4 @@
+#!/bin/sh
+
+CreateScriptDB_Admin
+ScriptDB -sync . Script_Admin MercentAdmin

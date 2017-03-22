@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cmd //c "%HOME%\\bin\\vsvars.export.local.bat"
+
+sort vsvars.local.env.0 | grep -v "!" > vsvars.local.env.0.sort
+sort vsvars.local.env.1 | grep -v "!" > vsvars.local.env.1.sort
+comm -1 -3 vsvars.local.env.0.sort vsvars.local.env.1.sort > vsvars.local.setenv.sh
+cat vsvars.local.setenv.sh | sed 's/declare -x /export /g' | sed 's/="/:="/g' | sed 's/\\\\/\\/g' | sed 's/"//g' | sed 's/#/\$\(HASH\)/g' > ~/bin/vsvars.sh
+
+# cleanup
+rm -f vsvars.local.*

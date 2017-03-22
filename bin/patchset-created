@@ -1,0 +1,42 @@
+#!/bin/sh
+
+#patchset-created --change <change id> --is-draft <boolean> --kind <change kind> --change-url <change url> 
+#                 --change-owner <change owner> --project <project name> --branch <branch> --topic <topic> 
+#                 --uploader <uploader> --commit <sha1> --patchset <patchset id>
+LOGFILE=/dev/null
+echo "Starting hook with arguments: $@" > $LOGFILE
+TEMP=`getopt -o a --long change:,is-draft:,kind:,change-url:,change-owner:,project:,branch:,topic:,uploader:,commit:,patchset: -- $@`
+eval set -- "$TEMP"
+
+# extract options and their arguments into variables.
+while true ; do
+    case "$1" in
+        --branch)
+            BRANCH=$2 ; shift 2 ;;
+        --change)
+            CHANGEID=$2 ; shift 2 ;;
+        --patchset)
+            PATCHSET=$2; shift 2 ;;
+        --commit)
+            COMMIT=$2; shift 2;;
+        --change-url)
+            URL=$2
+            CHANGE=`echo $2 | sed "s/.*\/\([0-9]*\)/\1/"`
+            shift 2;;
+        --) shift ; break ;;
+            *) 
+            echo "Unhandled parameters: $1 $2" >> $LOGFILE; shift 2 ;;
+    esac
+done
+
+echo "Branch: $BRANCH \nChangeId: $CHANGEID \nPatchset: $PATCHSET \nCommit: $COMMIT\nChange: $CHANGE" >> $LOGFILE
+if [ -z $BRANCH ] || [ -z $CHANGEID ] || [ -z $PATCHSET  ] || [ -z $COMMIT ]; then echo "Something was null! Exiting." >> $LOGFILE; exit 1; fi
+
+if [ $BRANCH != "dev" ] && (git merge-base --is-ancestor c377f01e51dfea75d8629e19f022c7bd373e70f1 $COMMIT || git merge-base --is-ancestor avatar/bad-dev-commit)
+then
+    echo "Found the poisoned commit! Not on dev branch!" >> $LOGFILE
+    CRCMD="ssh -p 29418 automatedbuild@gerrit gerrit review -m '\"This branch is poisoned by dev! Do not merge!\"' --code-review -2 $CHANGE,$PATCHSET"
+    echo "Sending CR: $CRCMD" >> $LOGFILE
+    $CRCMD
+fi
+

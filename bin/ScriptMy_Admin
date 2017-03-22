@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cmd //c "c:\git\main\Solution\Database\Admin\GenerateScripts.cmd"

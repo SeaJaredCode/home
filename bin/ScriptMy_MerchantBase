@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cmd //c "C:\git\main\Solution\Database\MerchantBase\GenerateScripts.cmd"
