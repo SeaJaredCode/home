@@ -22,3 +22,5 @@ apps
 temp  
 _vimrc  
 *.exe
+.npmrc
+.viminfo
