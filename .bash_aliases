@@ -8,3 +8,4 @@ if [ -z ${MSYSTEM-x} ]; then
     alias ca-client='winpty ca-client'
 fi;
 alias ls='ls -F --color=auto --show-control-chars'
+alias mkdir='mkdir -m 755'

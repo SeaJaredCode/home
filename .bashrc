@@ -8,14 +8,14 @@ force_color_prompt=yes
 # Source environment variables
 . ~/.environs
 
-if [ ! -f ~/bin/vsvars.sh ]; then
-    echo "Generating vsvars.sh"
-    . ~/bin/generate_vsvars
-fi
+#if [ ! -f ~/bin/vsvars.sh ]; then
+#    echo "Generating vsvars.sh"
+#    . ~/bin/generate_vsvars
+#fi
 
-. ~/bin/vsvars.sh
+#. ~/bin/vsvars.sh
 
-if [ ! $PATH ~= '~/bin' ]; then PATH=$PATH:~/bin; fi;
+if [ ! `echo :$PATH: | grep -F :~/bin:` ]; then PATH=$PATH:~/bin; fi;
 
 # Set emacs editing mode
 set -o emacs
@@ -23,7 +23,7 @@ set -o emacs
 # Source aliases
 . ~/.bash_aliases
 
-if [ ! -z ${MSYSTEM-x} ]; then
+if [ -z ${MSYSTEM-x} ]; then
     export SSH_AUTH_SOCK=/tmp/keepass.sock
 else
     # Set colorscheme for ls colors. Bootstrap from github repo
@@ -37,3 +37,9 @@ else
     eval `ssh-agent -s`
 fi;
 
+# Install/configure SPF13 vim setup
+SPF=".spf13-vim-3"
+if [ ! -d $SPF ]; then
+    git clone --depth=1 https://github.com/spf13/spf13-vim.git $SPF
+    sh $SPF/bootstrap.sh
+fi;
