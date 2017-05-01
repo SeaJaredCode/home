@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -z $1 ]
+then
+    echo "Missing repository to clone"
+    exit 1
+fi
+
+if [ -z $2 ]
+then
+    REPO_NAME=$1
+else
+    REPO_NAME=$2
+fi
+
+git clone ssh://`whoami`@gerrit:29418/$1 $REPO_NAME
+
+echo "Installing gerrit change-id hooks..."
+tar -xvf ~/bin/gerrit_hooks.tar -C $REPO_NAME

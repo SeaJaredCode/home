@@ -4,3 +4,7 @@ alias cdmain='cd /c/git/main'
 alias cduser='cd /c/git/users/jstiff'
 alias cdgit='cd /c/git'
 alias cdalt='cd /c/git/alt-main'
+if [ -z ${MSYSTEM-x} ]; then
+    alias ca-client='winpty ca-client'
+fi;
+alias ls='ls -F --color=auto --show-control-chars'

@@ -1,3 +1,10 @@
+export VISUAL=vim
+export EDITOR=$VISUAL
+export HISTCONTROL=ignoreboth
+export PROMPT_COMMAND='history -a'
+
+force_color_prompt=yes
+
 # Source environment variables
 . ~/.environs
 
@@ -8,11 +15,25 @@ fi
 
 . ~/bin/vsvars.sh
 
+if [ ! $PATH ~= '~/bin' ]; then PATH=$PATH:~/bin; fi;
+
 # Set emacs editing mode
 set -o emacs
 
 # Source aliases
 . ~/.bash_aliases
 
-export SSH_AUTH_SOCK=/tmp/keepass.sock
-#export GIT_SSH=/bin/plink
+if [ ! -z ${MSYSTEM-x} ]; then
+    export SSH_AUTH_SOCK=/tmp/keepass.sock
+else
+    # Set colorscheme for ls colors. Bootstrap from github repo
+    if [ ! -d ~/.dircolors ]; then git clone --depth=1 https://github.com/huyz/dircolors-solarized .dircolors && rm -r .dircolors/.git; fi;
+
+    eval `dircolors .dircolors/dircolors.256dark`
+    . .git-completion
+    . .git-prompt
+    export PS1="\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]$(__git_ps1 " (%s)")\[\033[0m\]\n\$ "
+
+    eval `ssh-agent -s`
+fi;
+

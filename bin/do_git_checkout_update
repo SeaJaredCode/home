@@ -1,0 +1,41 @@
+#!/bin/bash
+BRANCH_PARAM=$1
+CURRENT_BRANCH="$(git symbolic-ref --short HEAD 2>/dev/null)"
+UPDATE_BRANCH=${BRANCH_PARAM:-${CURRENT_BRANCH}}
+
+LOCAL_REF=`git show-ref refs/remotes/origin/$UPDATE_BRANCH | cut -d " " -f 1 - `
+REMOTE_REF=`git ls-remote origin $UPDATE_BRANCH | cut -f 1 -`
+
+cecho() {
+    local code="\033["
+      case "$1" in
+          black  | bk) color="${code}0;30m";;
+          red    |  r) color="${code}1;31m";;
+          green  |  g) color="${code}1;32m";;
+          yellow |  y) color="${code}1;33m";;
+          blue   |  b) color="${code}1;34m";;
+          purple |  p) color="${code}1;35m";;
+          cyan   |  c) color="${code}1;36m";;
+          gray   | gr) color="${code}0;37m";;
+          *) local text="$1";;
+    esac
+
+    [ -z "$text"  ] && local text="$color$2${code}0m"
+    echo -e "$text"
+}
+
+if [ $LOCAL_REF != $REMOTE_REF  ]
+then
+    cecho g "Fetching latest from origin"
+    git fetch
+fi
+
+if [ $CURRENT_BRANCH == $UPDATE_BRANCH ]
+then
+    cecho g "Resetting $UPDATE_BRANCH to origin/$UPDATE_BRANCH"
+    git reset --hard origin/$UPDATE_BRANCH
+else
+    cecho g "Checking out $UPDATE_BRANCH"
+    git checkout -B $UPDATE_BRANCH origin/$UPDATE_BRANCH
+fi
+

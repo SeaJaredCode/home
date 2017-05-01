@@ -1,0 +1,26 @@
+#!/bin/sh
+
+script_exists()
+{
+    if which $1 > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+SCRIPT_NAME="$0"
+
+until [ -z $1 ]
+do
+    SCRIPT_NAME+="_$1"
+    shift
+
+    if script_exists $SCRIPT_NAME; then
+        $SCRIPT_NAME $@
+        exit
+    fi
+done
+
+echo "Usage: gerrit command [command] parameters"
+exit
