@@ -1,10 +1,16 @@
-"if !has("gui_running")
-"    let g:solarized_termcolors=16
-"    let g:airline_theme = "murmur"
-"endif
+let g:airline_powerline_fonts = 0
+let g:airline_theme = "badwolf"
 
-let g:airline_powerline_fonts = 1
-
-colorscheme solarized
-set background=dark
+" colorscheme solarized
+" set background=dark
 set viminfo+=n~/.vim/.viminfo
+
+set noerrorbells visualbell t_vb=       " Silence annoying bells
+if has('autocmd')
+    autocmd GUIEnter * set visualbell t_vb=
+endif
+
+set showcmd                             " Show when leader has been pressed
+
+nnoremap <Leader><Space> :noh<CR>      " Clear search highlighting
+

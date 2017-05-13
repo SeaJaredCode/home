@@ -1,0 +1,196 @@
+#!/bin/bash
+
+#set -e
+
+script=`basename ${0}`
+bold='\e[1;31m'
+rev='\e[1;32m'
+off='\e[0;0m'
+
+main() {
+    _init
+    _parse_params "$@"
+
+    user=${user:-$USER}
+    key=${key:-~/.ssh/${ca}_rsa}
+    public_key=${key}.pub
+
+    _check_key_exists "$key"
+    case ${action:-help} in
+        sign)
+            _get_cert
+            if [ -z $no_agent ]; then _load_agent;fi;
+            ;;
+        list_cas)
+            _check_jq
+            _list_cas
+            ;;
+        list_roles)
+            _check_jq
+            _list_roles
+            ;;
+        help|*)
+            _show_help
+            ;;
+    esac
+}
+
+_init() {
+    local config url ca
+    config=~/.chub-ca
+    if [ ! -e $config ]; then
+        printf "${bold}Config file not found. Enter defaults:${off}"
+        read -p "CA server url: " url
+        read -p "Default CA: " ca
+        printf "base_url=${url}\ndefault_ca=${ca}" > $config
+    fi
+
+    . $config
+}
+
+_check_key_exists() {
+    if [ -r "${public_key}" ]; then return; fi;
+    printf "${rev}Key not found. Creating${off}"
+    ssh-keygen -f "${key}" -q -P "" || (printf "${bold}Could not create key.${off}" && exit 1)
+}
+
+_get_cert() {
+    _check_password
+    res=$(curl -sS -X POST -u $user:"$password" "${base_url}/sign?ca=${ca}" -F "file=@${public_key}") ||
+        printf "${bold}Failed to get cert from server.${off}\n"
+
+    eval $(echo $1 | tr "," "\n" | tr -d [{\ }] | sed 's/"\([^"]*\)":/\1=/g')
+    if [ ! $? ];then printf "${bold}Error message: ${message}${off}" && exit 1; fi;
+
+    if ! echo $payload> "${key}-cert.pub"; then printf "${bold}Could not write to file${off}\n"; fi;
+}
+
+_check_password() {
+    [ -z "$password" ] && read -s -p "Enter password: " password && echo
+}
+
+_list_cas() {
+    res=$(curl -sS -X GET "${base_url}/list/cas") || printf "${bold}Error connecting to ${base_url}\n"
+    export -f _print_ca
+    echo $res | jq '.payload[]' | jq -r '.name,.max_duration' | sed 's/\(.*\)/"\1"/g' | xargs -n 2 bash -c '_print_ca "$@"'
+}
+
+_print_ca() {
+    if [ $# != 1 ]; then return; fi;
+    printf "\n\t${rev}CA Name:     \t${0}${off}\n"
+    printf "\t${rev}Max Duration:\t${1}${off}\n"
+}
+
+_list_roles() {
+    res=$(curl -sS -X GET "${base_url}/list/roles?user=${user}") ||
+        printf "${bold}Could not retrieve roles from server.${off}\n"
+
+    export -f _print_role
+    echo "$res" | jq '.payload[]' | jq -r '.name,.description,.ldap_group,.allowed_principals,.allowed_cas' | sed 's/\(.*\)/"\1"/g' | xargs -n 5 bash -c '_print_role "$@"'
+}
+
+_print_role() {
+    if [ $# != 4 ]; then return; fi;
+    printf "\n\t${rev}Role:       \t${0}${off}\n"
+    printf "\t${rev}Description:\t${1}${off}\n"
+    printf "\t${rev}AD Group:   \t${2}${off}\n"
+    printf "\t${rev}Principals: \t${3}${off}\n"
+    printf "\t${rev}CAs:        \t${4}${off}\n"
+}
+
+_load_agent() {
+    $ssh-add "$key" || printf "${bold}Could not load keys into ssh-agent.${off}\n\t${rev}eval \`ssh-agent -s\`${off}\n"
+}
+
+_check_jq() {
+    if [ ! `which jq` ]
+    then
+        printf "${bold}Please install jq using \`apt-get install jq\` or downloading from https://stedolan.github.io/jq.${off}\n"
+        if [ ! -z ${MSYSTEM+x} ]
+        then
+            printf "\nFor use on MSYS, please download and place the exe somewhere in your path. Then create an alias for jq using:\n"
+            printf "\t alias='/path/to/jq-win64.exe'\n"
+        fi
+    fi
+}
+
+_show_help() {
+    printf "${rev}Usage:${off}\n"
+    printf "  $script -s [CA] [-u user] [-p password] [-k key] [-o output-dir]\n"
+    printf "  $script -r\n"
+    printf "  $script -c\n"
+    printf "\t${rev}-s${off} | ${rev}--sign${off}\t\tSign a request for a given user, key and CA.\n"
+    printf "\t${rev}-u${off} | ${rev}--user${off}\t\tUser to sign with.\n"
+    printf "\t${rev}-p${off} | ${rev}--password${off}\t\tPassword to sign with.\n"
+    printf "\t${rev}-k${off} | ${rev}--key${off}\t\tKey file to sign.\n"
+    printf "\t${rev}-o${off} | ${rev}--output-dir${off}\tDirectory to write signed certs and keys to..\n\n"
+    exit 1
+}
+
+_require() {
+    if [ -z ${2} ] || [ ${2:0:1} == "-" ]; then
+        echo -e "${bold}Missing parameter value for $1${off}"
+        _show_help
+    fi
+}
+
+_parse_params() {
+    while true ; do
+        case ${1:-done} in
+            -s|--sign)
+            action=sign
+            if [ -z ${2} ] || [ ${2:0:1} == "-" ]; then
+                ca=${default_ca}
+                shift
+            else
+                ca=${2}
+                shift 2
+            fi
+            ;;
+        -u|--user)
+            _require "$@"
+            user=$2
+            shift 2
+            ;;
+        -p|--password)
+            _require "$@"
+            password=$2
+            shift 2
+            ;;
+        -k|--key)
+            _require "$@"
+            key=$2
+            shift 2
+            ;;
+        -o|--output-dir)
+            _require "$@"
+            outdir=$2
+            shift 2
+            ;;
+        -h|--help)
+            _show_help
+            ;;
+        -n|--no-agent)
+            no_agent=true
+            shift
+            ;;
+        -r|--list-roles)
+            action=list_roles
+            shift
+            ;;
+        -c|--list-cas)
+            action=list_cas
+            shift
+            ;;
+        done)
+            shift
+            break
+            ;;
+        *)
+            echo -e \\n"Option ${bold}${1}${off} not allowed."
+            _show_help
+      esac
+    done
+}
+
+main "$@"

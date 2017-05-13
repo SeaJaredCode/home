@@ -27,3 +27,6 @@ apps
 temp  
 .ca-client/
 .dircolors/
+.chef/
+.irb-history
+.rvm/

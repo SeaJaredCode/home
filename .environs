@@ -1,0 +1,7 @@
+# Personal env variables
+export VISUAL=vim
+export EDITOR=$VISUAL
+export HISTCONTROL=ignoreboth
+export PROMPT_COMMAND='history -a'
+export LESS='-q -~'
+
