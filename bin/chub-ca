@@ -6,6 +6,7 @@ script=`basename ${0}`
 bold='\e[1;31m'
 rev='\e[1;32m'
 off='\e[0;0m'
+USER=${USER:-$USERNAME}
 
 main() {
     _init
@@ -19,7 +20,7 @@ main() {
     case ${action:-help} in
         sign)
             _get_cert
-            if [ -z $no_agent ]; then _load_agent;fi;
+            if [ -z $no_agent ]; then _load_agent; fi;
             ;;
         list_cas)
             _check_jq
@@ -39,10 +40,12 @@ _init() {
     local config url ca
     config=~/.chub-ca
     if [ ! -e $config ]; then
-        printf "${bold}Config file not found. Enter defaults:${off}"
+        printf "${rev}Config file not found. Enter default values for configuration.${off}\n"
         read -p "CA server url: " url
+        if [[ ! $url =~ ^http[s]?://  ]]; then url="https://${url}" ; fi;
         read -p "Default CA: " ca
         printf "base_url=${url}\ndefault_ca=${ca}" > $config
+        printf "\n"
     fi
 
     . $config
@@ -50,27 +53,30 @@ _init() {
 
 _check_key_exists() {
     if [ -r "${public_key}" ]; then return; fi;
-    printf "${rev}Key not found. Creating${off}"
-    ssh-keygen -f "${key}" -q -P "" || (printf "${bold}Could not create key.${off}" && exit 1)
+    printf "${rev}Key not found. Creating${off}\n"
+    ssh-keygen -f "${key}" -q -P "" || (printf "${bold}Could not create key.${off}\n" && exit 1)
 }
 
 _get_cert() {
     _check_password
     res=$(curl -sS -X POST -u $user:"$password" "${base_url}/sign?ca=${ca}" -F "file=@${public_key}") ||
-        printf "${bold}Failed to get cert from server.${off}\n"
+        (   printf "${bold}Failed to get cert from server.${off}\n" &&
+            printf "Server response:\n${res}\n" && exit 1
+        )
 
     eval $(echo $1 | tr "," "\n" | tr -d [{\ }] | sed 's/"\([^"]*\)":/\1=/g')
-    if [ ! $? ];then printf "${bold}Error message: ${message}${off}" && exit 1; fi;
 
-    if ! echo $payload> "${key}-cert.pub"; then printf "${bold}Could not write to file${off}\n"; fi;
+    [ ! $? ] && printf "${bold}Error message: ${message}${off}\n" && exit 1
+    if ! echo $payload > "${key}-cert.pub"; then printf "${bold}Could not write to file${off}\n"; fi;
 }
 
 _check_password() {
-    [ -z "$password" ] && read -s -p "Enter password: " password && echo
+    [ -z "$password" ] && read -s -p "Enter password: " password && printf "\n"
 }
 
 _list_cas() {
-    res=$(curl -sS -X GET "${base_url}/list/cas") || printf "${bold}Error connecting to ${base_url}\n"
+    res=$(curl -sS -X GET "${base_url}/list/cas") || (printf "${bold}Error connecting to ${base_url}\n" && exit 1);
+    if [ ! -z $skipjq ]; then printf "Raw response: ${res}\n"; return 1; fi;
     export -f _print_ca
     echo $res | jq '.payload[]' | jq -r '.name,.max_duration' | sed 's/\(.*\)/"\1"/g' | xargs -n 2 bash -c '_print_ca "$@"'
 }
@@ -83,7 +89,8 @@ _print_ca() {
 
 _list_roles() {
     res=$(curl -sS -X GET "${base_url}/list/roles?user=${user}") ||
-        printf "${bold}Could not retrieve roles from server.${off}\n"
+        (printf "${bold}Could not retrieve roles from server.${off}\n" && exit 1);
+    if [ ! -z $skipjq ]; then printf "Raw response: ${res}"; return 1; fi;
 
     export -f _print_role
     echo "$res" | jq '.payload[]' | jq -r '.name,.description,.ldap_group,.allowed_principals,.allowed_cas' | sed 's/\(.*\)/"\1"/g' | xargs -n 5 bash -c '_print_role "$@"'
@@ -99,37 +106,36 @@ _print_role() {
 }
 
 _load_agent() {
-    $ssh-add "$key" || printf "${bold}Could not load keys into ssh-agent.${off}\n\t${rev}eval \`ssh-agent -s\`${off}\n"
+    ssh-add "$key" || printf "${bold}Could not load keys into ssh-agent.${off}\n\t${rev}eval \`ssh-agent -s\`${off}\n"
 }
 
 _check_jq() {
-    if [ ! `which jq` ]
+    which jq >> /dev/null 2>&1 && return
+    printf "${bold}In order to parse JSON response properly, please install jq using \`apt-get install jq\` or downloading from https://stedolan.github.io/jq.${off}\n"
+    if [ ! -z ${MSYSTEM+x} ]
     then
-        printf "${bold}Please install jq using \`apt-get install jq\` or downloading from https://stedolan.github.io/jq.${off}\n"
-        if [ ! -z ${MSYSTEM+x} ]
-        then
-            printf "\nFor use on MSYS, please download and place the exe somewhere in your path. Then create an alias for jq using:\n"
-            printf "\t alias='/path/to/jq-win64.exe'\n"
-        fi
+        printf "\n\nFor use on MSYS, please download and place the exe somewhere in your path. Then create an alias for jq using:\n"
+        printf "\t alias='/path/to/jq-win64.exe'\n"
     fi
+    skipjq=true
 }
 
 _show_help() {
     printf "${rev}Usage:${off}\n"
     printf "  $script -s [CA] [-u user] [-p password] [-k key] [-o output-dir]\n"
     printf "  $script -r\n"
-    printf "  $script -c\n"
-    printf "\t${rev}-s${off} | ${rev}--sign${off}\t\tSign a request for a given user, key and CA.\n"
-    printf "\t${rev}-u${off} | ${rev}--user${off}\t\tUser to sign with.\n"
-    printf "\t${rev}-p${off} | ${rev}--password${off}\t\tPassword to sign with.\n"
-    printf "\t${rev}-k${off} | ${rev}--key${off}\t\tKey file to sign.\n"
+    printf "  $script -c\n\n"
+    printf "\t${rev}-s${off} | ${rev}--sign${off}      \tSign a request for a given user, key and CA.\n"
+    printf "\t${rev}-u${off} | ${rev}--user${off}      \tUser to sign with.\n"
+    printf "\t${rev}-p${off} | ${rev}--password${off}  \tPassword to sign with.\n"
+    printf "\t${rev}-k${off} | ${rev}--key${off}       \tKey file to sign.\n"
     printf "\t${rev}-o${off} | ${rev}--output-dir${off}\tDirectory to write signed certs and keys to..\n\n"
     exit 1
 }
 
 _require() {
     if [ -z ${2} ] || [ ${2:0:1} == "-" ]; then
-        echo -e "${bold}Missing parameter value for $1${off}"
+        echo -e "${bold}Missing parameter value for $1${off}\n"
         _show_help
     fi
 }

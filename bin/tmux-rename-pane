@@ -1,0 +1,5 @@
+#!/bin/sh
+
+printf '\033]2;'
+printf "$@"
+printf '\033\\'

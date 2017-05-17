@@ -1,4 +1,4 @@
-let g:airline_powerline_fonts = 0
+let g:airline_powerline_fonts = 1
 let g:airline_theme = "badwolf"
 
 " colorscheme solarized
@@ -12,5 +12,5 @@ endif
 
 set showcmd                             " Show when leader has been pressed
 
-nnoremap <Leader><Space> :noh<CR>      " Clear search highlighting
+nnoremap <Leader><Space> :noh<CR>      " Clear search highlightinG
 

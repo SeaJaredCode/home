@@ -25,6 +25,13 @@ setw -g window-status-activity-attr "underscore"
 setw -g window-status-activity-fg "colour27"
 setw -g window-status-separator ""
 setw -g window-status-bg "colour234"
+
+set -g status-left "#[fg=colour15,bg=colour27] #S #[fg=colour27,bg=colour237]#[fg=colour144,bg=colour237] #W  #[fg=colour237,bg=colour234]#[fg=colour27,bg=colour234] [#P]:#20T "
+set -g status-right "#[fg=colour27,bg=colour234] %a #[fg=colour234,bg=colour237]#[fg=colour144,bg=colour237] %R #[fg=colour237,bg=colour27]#[fg=colour15,bg=colour27] #H "
+setw -g window-status-format "#[default] [#I]:#W "
+setw -g window-status-current-format "#[fg=colour234,bg=colour237]#[fg=colour144,bg=colour237] [#I]:#W #[fg=colour237,bg=colour234]"
+
+# Sans powerline
 set -g status-left "#[fg=colour15,bg=colour27] #S #[fg=colour144,bg=colour237] #W #[fg=colour27,bg=colour234] [#P]:#20T "
 set -g status-right "#[fg=colour27,bg=colour234] %a #[fg=colour144,bg=colour237] %R #[fg=colour15,bg=colour27] #H "
 setw -g window-status-format "#[default] [#I]:#W "
