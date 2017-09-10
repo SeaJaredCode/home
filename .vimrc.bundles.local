@@ -1,2 +1,5 @@
 "Bundle 'edkolev/tmuxline.vim'
+Bundle 'guns/vim-sexp'
+Bundle 'tpope/vim-sexp-mappings-for-regular-people'
+Bundle 'tpope/vim-fireplace'
 

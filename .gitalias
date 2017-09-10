@@ -1,19 +1,17 @@
 [alias]
-    st = status
     a = add -A
     b = branch
     bc = branch --contains
     bC = branch -r --contains
     bcr = branch -r --contains
     f = fetch
-    F = fetch --all --prune
+    fa = fetch --all --prune
     m = merge
     s = status
+    st = status
     ci = commit
-    cI = commit --no-edit
     cin = commit --no-edit
     ca = commit --amend
-    cA = commit --amend --no-edit
     can = commit --amend --no-edit
     co = checkout
     cm = checkout -m
