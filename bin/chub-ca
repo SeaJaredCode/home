@@ -42,7 +42,7 @@ _init() {
     if [ ! -e $config ]; then
         printf "${rev}Config file not found. Enter default values for configuration.${off}\n"
         read -p "CA server url: " url
-        if [[ ! $var =~ ^http[s]?://  ]]; then url="https://${url}" ; fi;
+        if [[ ! $url =~ ^http[s]?://  ]]; then url="https://${url}" ; fi;
         read -p "Default CA: " ca
         printf "base_url=${url}\ndefault_ca=${ca}" > $config
         printf "\n"
@@ -60,14 +60,15 @@ _check_key_exists() {
 _get_cert() {
     _check_password
     res=$(curl -sS -X POST -u $user:"$password" "${base_url}/sign?ca=${ca}" -F "file=@${public_key}") ||
-        (   printf "${bold}Failed to get cert from server.${off}\n" &&
-            printf "Server response:\n${res}\n" && exit 1
+        (   printf "${bold}Failed to get cert from server.${off}\n"
+            printf "Server response:\n${res}\n"
+            exit 1
         )
 
-    eval $(echo $1 | tr "," "\n" | tr -d [{\ }] | sed 's/"\([^"]*\)":/\1=/g')
+    eval `echo ${res} | tr "," "\n" | tr -d [{\}] | sed 's/[" ]*\([^"]*\)": /\1=/g'`
 
-    if [ ! $? ]; then printf "${bold}Error message: ${message}${off}\n" && exit 1; fi;
-    if ! echo $payload > "${key}-cert.pub"; then printf "${bold}Could not write to file${off}\n"; fi;
+    [ ! $? ] && printf "${bold}Error message: ${message}${off}\n" && exit 1
+    if ! echo -e $payload > "${key}-cert.pub"; then printf "${bold}Could not write to file${off}\n"; fi;
 }
 
 _check_password() {
@@ -90,7 +91,7 @@ _print_ca() {
 _list_roles() {
     res=$(curl -sS -X GET "${base_url}/list/roles?user=${user}") ||
         (printf "${bold}Could not retrieve roles from server.${off}\n" && exit 1);
-    if [ ! -z $skipjq ]; then printf "Raw response: ${res}"; return 1; fi;
+    if [ ! -z $skipjq ]; then printf "Raw response: ${res}\n"; return 1; fi;
 
     export -f _print_role
     echo "$res" | jq '.payload[]' | jq -r '.name,.description,.ldap_group,.allowed_principals,.allowed_cas' | sed 's/\(.*\)/"\1"/g' | xargs -n 5 bash -c '_print_role "$@"'
@@ -106,7 +107,7 @@ _print_role() {
 }
 
 _load_agent() {
-    $ssh-add "$key" || printf "${bold}Could not load keys into ssh-agent.${off}\n\t${rev}eval \`ssh-agent -s\`${off}\n"
+    ssh-add "$key" || printf "${bold}Could not load keys into ssh-agent.${off}\n\t${rev}eval \`ssh-agent -s\`${off}\n"
 }
 
 _check_jq() {
@@ -130,6 +131,7 @@ _show_help() {
     printf "\t${rev}-p${off} | ${rev}--password${off}  \tPassword to sign with.\n"
     printf "\t${rev}-k${off} | ${rev}--key${off}       \tKey file to sign.\n"
     printf "\t${rev}-o${off} | ${rev}--output-dir${off}\tDirectory to write signed certs and keys to..\n\n"
+    printf "\t${rev}-n${off} | ${rev}--no-agent${off}  \tDon't load keys to ssh-agent"
     exit 1
 }
 

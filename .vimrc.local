@@ -12,5 +12,5 @@ endif
 
 set showcmd                             " Show when leader has been pressed
 
-nnoremap <Leader><Space> :noh<CR>      " Clear search highlighting
+nnoremap <Leader><Space> :noh<CR>      " Clear search highlightinG
 
