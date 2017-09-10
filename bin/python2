@@ -1,0 +1,6 @@
+#!/bin/sh
+
+PATH=`echo $PATH | sed 's/python35/python27/g'`
+PATH+=":/c/Program Files (x86)/FontForgeBuilds/bin"
+
+ffpython.exe "$@"

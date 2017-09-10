@@ -1,5 +1,6 @@
-BoldAsFont=no
+BoldAsFont=yes
 Font=Inconsolata-g for Powerline
 ClicksPlaceCursor=yes
-FontHeight=12
+FontHeight=14
 FontWeight=500
+Transparency=off

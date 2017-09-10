@@ -1,0 +1,2 @@
+#!/bin/bash
+~/apps/sbt/bin/sbt "$@"
