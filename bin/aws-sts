@@ -1,0 +1,16 @@
+#!/bin/bash
+
+err() {
+    echo $1
+    exit 1
+}
+
+which aws > /dev/null || err "Could not find aws in path."
+[[ $# -lt 1 ]] && err "Usage: $(basename $0) <tokencode>"
+
+accountid=${AWS_ACCOUNT_ID:-${2:-324842975178}}
+AWS_SESSION_TOKEN=`aws sts get-session-token --serial-number arn:aws:iam::$accountid:mfa/jared --token-code $1|jq -r '.Credentials.SessionToken'`
+
+echo $AWS_SESSION_TOKEN
+export $AWS_SESSION_TOKEN
+

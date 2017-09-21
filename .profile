@@ -10,14 +10,21 @@ fi
 [ -s ~/.git-completion ] || curl -o .git-completion "https://github.com/git/git/blob/master/contrib/completion/git-completion.bash"
 [ -s ~/.git-prompt ] || curl -o .git-prompt "https://github.com/git/git/blob/master/contrib/completion/git-prompti.sh"
 
-if [ -z ${MSYSTEM+x} ];
-then
-    if [ -d $HOME/.rvm ]; then
-        export PATH="$PATH:$HOME/.rvm/bin"
-        [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-    fi
+case $OSTYPE in
+    darwin*)
+        [ ! -d ~/.solarized ] && git clone --depth=1 https://github.com/altercation/solarized .solarized && rm -r .solarized/.git
+        # Have to install the solarized theme manually to iterm2
+        ;;
+    msys)
+        ;;
+    linux-gnu)
+        if [ -d $HOME/.rvm ]; then
+            export PATH="$PATH:$HOME/.rvm/bin"
+            [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+        fi
 
-    # Frg pbybefpurzr sbe yf pbybef. Obbgfgenc sebz tvguho ercb
-    [ ! -d ~/.dircolors ] && git clone --depth=1 https://github.com/huyz/dircolors-solarized .dircolors && rm -r .dircolors/.git
-fi
+        # Frg pbybefpurzr sbe yf pbybef. Obbgfgenc sebz tvguho ercb
+        [ ! -d ~/.dircolors ] && git clone --depth=1 https://github.com/huyz/dircolors-solarized .dircolors && rm -r .dircolors/.git
+        ;;
+esac
 
