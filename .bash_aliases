@@ -32,8 +32,11 @@ alias mkdir='mkdir -pv -m 755'
 alias df='$DF -Tha --total'
 alias cd..='cd ..'
 alias ..='cd ..'
-alias .='source'
 alias ghist='history | grep '
 
 alias top='htop'
-alias myip='curl http://ipencho.net/plain; echo'
+alias myip='curl http://ipecho.net/plain; echo'
+
+# bash functions that are essentially aliases with parameters
+aws-refresh-token() { eval `aws-sts $1`; }
+

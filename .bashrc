@@ -9,26 +9,22 @@ set -o emacs
 # Source aliases
 . ~/.bash_aliases
 
-## Path
-add_path_to_dir() {
-    dir="$1"
-    search="${2:-$1}"
+# Idempotent fn to add dir to $PATH
+add_to_PATH () {
+    for d; do
+        d=$(cd -- "$d" && { pwd -P || pwd;  }) 2>/dev/null  # canonicalize symbolic links
+        if [ -z "$d"  ]; then continue; fi  # skip nonexistent directory
 
-    [ -d "$dir" ] && $(echo ":$PATH:" | grep -E "$search" > /dev/null) || PATH="$PATH:$dir"
-    return $?
+        case ":$PATH:" in
+            *":$d:"*) :;;
+            *) export PATH=$PATH:$d;;
+        esac
+    done
 }
 
-add_path_to_dir "~/bin" ":~/bin:|:$HOME/bin:"
-# Setting PATH for Python 3.6
-pypath="/Library/Framework/Python.framework/Versions/3.6/bin"
-add_path_to_dir "$pypath"
+# Add ~/bin to path
+add_to_PATH ~/bin
 
-localpypath="$HOME/Library/Python/3.6/bin"
-add_path_to_dir "$localpypath"
-
-export PATH
-
-## Platform specifics
 if [ ${MSYSTEM-x} != x ]; then
     if [ ! -f ~/bin/vsvars.sh ]; then
         echo "Generating vsvars.sh"

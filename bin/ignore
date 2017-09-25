@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# do nothing if not in a git repository
+file="$(git rev-parse --show-toplevel 2> /dev/null)/.gitignore" || (echo "Not in a git repository" >&2;exit 1)
+
+case "$1" in
+    -g)
+        file=~/.gitignore
+        shift
+        ;;
+    -l)
+        file=.gitignore
+        shift
+        ;;
+    -h|--help)
+        printf "Usage: $(basename $0) [MODE] path [path ...]\n\n\t-g\tadd to global ignore\n\t-l\tLocal directory ignore\n\t-r\tRepository root ignore (default)\n\n"
+        exit 0
+        ;;
+esac
+
+for p in "$@"
+do
+    echo $p >> $file
+done

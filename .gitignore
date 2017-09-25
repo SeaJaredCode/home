@@ -52,3 +52,6 @@ Projects/
 Public/
 .aws/
 .CFUserTextEncoding
+.cups
+.local/
+.terraform.d/
