@@ -1,0 +1,14 @@
+{
+  "segments": [
+    "time",
+    "battery",
+    "username",
+    "hostname",
+    "ssh",
+    "cwd",
+    "git",
+    "aws_profile",
+    "jobs",
+    "root"
+  ]
+}

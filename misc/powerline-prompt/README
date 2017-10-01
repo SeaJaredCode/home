@@ -1,0 +1,5 @@
+This contains files customized for mac usage for power options and increased powerline font usage.
+
+These files are modified from the installation of powerline-shell using: pip install powerline-shell.
+
+These could be contributed back to the repo at: https://github.com/banga/powerline-shell, but that would take a little bit of time to figure out quite what to do.
