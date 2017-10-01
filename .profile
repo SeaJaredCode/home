@@ -12,9 +12,11 @@ fi
 
 case $OSTYPE in
     darwin*)
-        [ ! -d ~/.solarized ] && git clone --depth=1 https://github.com/altercation/solarized .solarized && rm -r .solarized/.git
-        # Have to install the solarized theme manually to iterm2
-        add_to_PATH ~/Library/Python/3.6/bin /Library/Frameworks/Python.framework/Versions/3.6/bin
+        # Have to install themes manually to iterm2
+        [ ! -d ~/.solarized ] && git clone --depth=1 https://github.com/altercation/solarized .solarized && rm -rf .solarized/.git
+        [ ! -d ~/.iterm2/schemes ] && git clone --depth=1 https://github.com/mbadolato/iTerm2-Color-Schemes .iterm2/schemes  && rm -rf .iterm2/schemes/.git
+
+        add_to_PATH ~/Library/Python/2.7/bin /usr/local/opt/python/libexec/bin
         ;;
     msys)
         ;;

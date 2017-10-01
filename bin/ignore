@@ -20,5 +20,5 @@ esac
 
 for p in "$@"
 do
-    echo $p >> $file
+    echo "$p" >> $file
 done

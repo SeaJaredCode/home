@@ -13,4 +13,14 @@ endif
 set showcmd                             " Show when leader has been pressed
 
 nnoremap <Leader><Space> :noh<CR>      " Clear search highlightinG
+set pastetoggle=<F2>
 
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+
+let g:airline_symbols.space = "\ua0"
+
+let g:terraform_align = 1
+let g:terraform_remap_spacebar = 1
+autocmd FileType terraform setlocal commentstring = "#%s"
