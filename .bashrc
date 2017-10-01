@@ -38,9 +38,23 @@ else
     if [ -d ~/.dircolors ]; then eval `dircolors ~/.dircolors/dircolors.256dark`; fi;
 
     . ~/.git-completion
-    . ~/.git-prompt
 
-    export PS1="\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]$(__git_ps1 " (%s)")\[\033[0m\]\n\$ "
+    case $OSTYPE in
+    darwin*)
+        function _update_ps1() {
+            PS1="$(powerline-shell $?)"
+        }
+
+        if [ "$TERM" != "linux" ]; then
+            PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+        fi
+        ;;
+    *)
+        . ~/.git-prompt
+
+        export PS1="\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]$(__git_ps1 " (%s)")\[\033[0m\]\n\$ "
+        ;;
+    esac
 fi;
 
 export NVM_DIR="$HOME/.nvm"

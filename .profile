@@ -16,7 +16,7 @@ case $OSTYPE in
         [ ! -d ~/.solarized ] && git clone --depth=1 https://github.com/altercation/solarized .solarized && rm -rf .solarized/.git
         [ ! -d ~/.iterm2/schemes ] && git clone --depth=1 https://github.com/mbadolato/iTerm2-Color-Schemes .iterm2/schemes  && rm -rf .iterm2/schemes/.git
 
-        add_to_PATH ~/Library/Python/2.7/bin /usr/local/opt/python/libexec/bin
+        add_to_PATH /usr/local/opt/python/libexec/bin
         ;;
     msys)
         ;;
