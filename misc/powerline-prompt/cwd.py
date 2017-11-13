@@ -8,7 +8,7 @@ ELLIPSIS = u'\u2026'
 def replace_home_dir(cwd):
     home = os.getenv('HOME')
     if cwd.startswith(home):
-        return '~' + cwd[len(home):]
+        return u'\uf07c' + ' ~' + cwd[len(home):]
     return cwd
 
 
@@ -59,7 +59,7 @@ def add_cwd_segment(powerline):
     cwd = replace_home_dir(cwd)
 
     if powerline.segment_conf("cwd", "mode") == 'plain':
-        powerline.append(' %s ' % (cwd,), powerline.theme.CWD_FG, powerline.theme.PATH_BG)
+        powerline.append('%s' % (cwd,), powerline.theme.CWD_FG, powerline.theme.PATH_BG)
         return
 
     names = split_path_into_names(cwd)

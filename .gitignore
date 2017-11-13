@@ -56,3 +56,17 @@ Public/
 .local/
 .terraform.d/
 .npm/
+.chefdk/
+.coursier/
+.docker/
+.emacs.d/
+.idea-build/
+.ideavimrc
+.ivy2/
+.kitchen/
+.packer.d/
+.sbt/
+.sbt_config
+.vagrant.d/
+.vscode/
+VirtualBox VMs/

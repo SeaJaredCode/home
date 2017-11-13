@@ -1,2 +1,10 @@
+if has('nvim')
+	let s:editor_root=expand("~/.config/nvim")
+else
+	let s:editor_root=expand("~/.vim")
+endif
 let g:spf13_consolidated_directory = $HOME . '/.vim/.'
+let g:airline_powerline_fonts = 1
+
+set encoding=utf-8
 

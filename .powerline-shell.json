@@ -2,13 +2,14 @@
   "segments": [
     "time",
     "battery",
-    "username",
-    "hostname",
     "ssh",
     "cwd",
     "git",
     "aws_profile",
     "jobs",
+    "newline",
+    "username",
+    "hostname",
     "root"
   ]
 }

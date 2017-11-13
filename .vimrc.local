@@ -1,5 +1,12 @@
-let g:airline_powerline_fonts = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme = "badwolf"
+"let g:airline_symbols = "fancy"
+
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.space = "\ua0"
 
 " colorscheme solarized
 " set background=dark
@@ -7,19 +14,27 @@ set viminfo+=n~/.vim/.viminfo
 
 set noerrorbells visualbell t_vb=       " Silence annoying bells
 if has('autocmd')
-    autocmd GUIEnter * set visualbell t_vb=
+	autocmd GUIEnter * set visualbell t_vb=
+endif
+
+if exists('$TMUX')
+	set clipboard=
+else
+	if has("clipboard")
+		set clipboard=unnamed " copy to the system clipboard
+
+		if has("unnamedplus") " X11 support
+			set clipboard+=unnamedplus
+		endif
+	endif
 endif
 
 set showcmd                             " Show when leader has been pressed
-
 nnoremap <Leader><Space> :noh<CR>      " Clear search highlightinG
 set pastetoggle=<F2>
 
-if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
-endif
-
-let g:airline_symbols.space = "\ua0"
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
 
 let g:terraform_align = 1
 let g:terraform_remap_spacebar = 1

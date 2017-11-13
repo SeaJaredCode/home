@@ -7,7 +7,7 @@ class Segment(BasicSegment):
     def add_to_powerline(self):
         powerline = self.powerline
         if powerline.args.shell == 'bash':
-            time_ = '\\t'
+            time_ = '\\t'  #u'\u256d' + '\\t'
         elif powerline.args.shell == 'zsh':
             time_ = ' %* '
         else:
