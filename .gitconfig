@@ -4,7 +4,8 @@
 [core]
     autocrlf = false
     excludesfile = ~/.gitignore
-    fscahce=true
+    fscahce = true
+    ignorecase = false
 [include]
     path=~/.gitalias
 [diff]

@@ -1,4 +1,17 @@
 #!/bin/sh
 
-echo $@
-/c/Program\ Files/Perforce/p4merge.exe "$@"
+echo "$@"
+
+case $OSTYPE in
+    darwin*)
+        cmd=/Applications/p4merge.app/Contents/Resources/launchp4merge
+        ;;
+    msys*)
+        cmd=/c/Program\ Files/Perforce/p4merge.exe
+        ;;
+    *)
+        echo "Not sure how to find p4merge." && exit 1
+        ;;
+esac
+
+echo $cmd "$@"

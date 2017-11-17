@@ -70,3 +70,4 @@ Public/
 .vagrant.d/
 .vscode/
 VirtualBox VMs/
+.scalac/
