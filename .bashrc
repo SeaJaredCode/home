@@ -24,6 +24,7 @@ add_to_PATH () {
 
 # Add ~/bin to path
 add_to_PATH ~/bin
+add_to_PATH ~/.local/bin
 
 if [ ${MSYSTEM-x} != x ]; then
     if [ ! -f ~/bin/vsvars.sh ]; then
@@ -65,5 +66,8 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-. .bash_fns
+. ~/.bash_fns
+echo -e -n "\x1b[\x35 q"
+
+if [ -e .bashrc_local ]; then source .bashrc_local 2> /dev/null; fi
 

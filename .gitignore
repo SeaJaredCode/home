@@ -71,3 +71,16 @@ Public/
 .vscode/
 VirtualBox VMs/
 .scalac/
+.netrc
+.helm/
+.mono/
+AmazonWorkDocsCompanion/
+Creative Cloud Files/
+.stack/
+go/
+WorkDocs/
+.bash_completions/
+.ammonite/
+.cassandra/
+.ideaLibSources/
+.minikube/

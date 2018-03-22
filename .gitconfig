@@ -1,6 +1,6 @@
 [user]
-    name = Jared Stiff
-    email = jstiff@commercehub.com
+	name = Jared Stiff
+	email = jared@soundcommerce.com
 [core]
     autocrlf = false
     excludesfile = ~/.gitignore
@@ -27,3 +27,8 @@
     enabled = true
 [alias]
 	where = branch -r --contains
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

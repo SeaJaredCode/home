@@ -1,7 +1,6 @@
 {
   "segments": [
     "time",
-    "battery",
     "ssh",
     "cwd",
     "git",

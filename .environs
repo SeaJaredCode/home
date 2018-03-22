@@ -4,4 +4,5 @@ export EDITOR=$VISUAL
 export HISTCONTROL=ignoreboth
 export PROMPT_COMMAND='history -a'
 export LESS='-R -q -~'
+export HOMEBREW_NO_ANALYTICS=1
 

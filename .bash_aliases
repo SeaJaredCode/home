@@ -10,6 +10,7 @@ case $OSTYPE in
 
         alias dircolors='gdircolors'
         alias cdgit='cd ~/Projects'
+        alias cdm='cd ~/Projects/mono'
         ;;
     msys)
         alias cdmain='cd /c/git/main'
@@ -22,6 +23,7 @@ case $OSTYPE in
         ;;
 esac
 
+alias check='sudo mtr google.com'
 alias ls='$LS -F --color=auto --show-control-chars'
 alias ll='ls -ahl'
 alias lsl='ll --color | less'
@@ -40,3 +42,9 @@ alias myip='curl http://ipecho.net/plain; echo'
 # bash functions that are essentially aliases with parameters
 aws-refresh-token() { eval `aws-sts $1`; }
 
+alias login_docker="aws ecr get-login --no-include-email --region us-west-2|cut -d ' ' -f 6| docker login -u AWS --password-stdin https://324842975178.dkr.ecr.us-west-2.amazonaws.com"
+alias amm="amm --no-remote-logging"
+alias gource="gource --auto-skip-seconds 0.1 --seconds-per-day 0.5 --camera-mode track --dont-stop"
+alias kls="kubectl get pods"
+alias kcp="kubectl cp"
+alias klsg="kubectl get pods | grep"

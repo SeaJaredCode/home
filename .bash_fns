@@ -23,3 +23,33 @@ drm() {
 dmake() {
     docker build . -t $1
 }
+
+findd() {
+    find . -type d | grep "$1"
+}
+
+findf() {
+    find . -type f | grep "$1"
+}
+
+xrm() {
+    xargs rm -r
+}
+
+kbin() {
+    kpath=/opt/kafka/current/bin
+    kscripts=/Users/jared/Projects/mono/utils/kafka
+
+    binary=$1
+    shift
+
+    case $binary in
+    ls)
+        find $kscripts $kpath -type f -depth 1 -perm +111 | xargs basename
+        ;;
+    *)
+        export PATH=$kscripts:$kpath:$PATH
+        $binary "$@"
+        ;;
+    esac
+}
