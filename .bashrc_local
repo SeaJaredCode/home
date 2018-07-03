@@ -1,5 +1,5 @@
 sourceIt() {
-    completions=~/.bash_completions
+    local completions=~/.bash_completions
     [ -d $completions ] || mkdir $completions
 
     dir=${3:-$PWD}
@@ -17,5 +17,12 @@ sourceIt "kubectl" "kubectl completion bash"
 sourceIt "helm" "helm completion bash"
 sourceIt "pants" "./pants bash-completion" "$mono"
 printf "Done!\n"
+unset mono
+unset -f sourceIt
 
 eval $($mono/sc -f 2> /dev/null) > /dev/null 2>&1
+
+gcloud_bin=$(dirname $(dirname $(ls -l /usr/local/bin/gcloud | sed -e 's/.* -> //')))
+source $gcloud_bin/path.bash.inc
+source $gcloud_bin/completion.bash.inc
+unset gcloud_bin

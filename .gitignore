@@ -84,3 +84,5 @@ WorkDocs/
 .cassandra/
 .ideaLibSources/
 .minikube/
+.boto
+.gsutil/

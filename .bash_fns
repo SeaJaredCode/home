@@ -53,3 +53,44 @@ kbin() {
         ;;
     esac
 }
+
+kexec() {
+    [ -z ${1} ] && echo "No target specified" && return 1
+    exe=${2:-/bin/bash}
+    PS3="Pod to exec $exe in: "
+    select pod in $(kubectl get pods | grep $1 | cut -d ' ' -f 1); do
+        kubectl exec -it ${pod} -- ${exe}
+        return 0
+    done
+}
+
+klog() {
+    PS3="Pod to get logs from: "
+
+    select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+        shift
+        kubectl logs "$@" $pod
+        return 0
+    done
+}
+
+kls() {
+    if [ -z ${1:+1} ]; then
+        kubectl get pods
+    else
+        kubectl get pods | grep ${1}
+    fi
+}
+
+kcp() {
+    kubectl cp $1 $2
+}
+
+kdel() {
+    PS3="Pod to restart: "
+
+    select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+        kubectl delete pod/$pod
+        return 0
+    done
+}

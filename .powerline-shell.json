@@ -1,4 +1,8 @@
 {
+  "battery": "always_show_percentage",
+  "hostname": {
+      "colorize": "true"
+  },
   "segments": [
     "time",
     "ssh",
@@ -10,5 +14,6 @@
     "username",
     "hostname",
     "root"
-  ]
+  ],
+  "theme": "default"
 }
