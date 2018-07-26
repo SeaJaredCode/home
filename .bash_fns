@@ -1,27 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
-dsh() {
-    image=$1
-    shift
-    docker run -it $image /bin/sh "$@"
-}
+# Idempotent fn to add dir to $PATH
+add_to_PATH () {
+    for d; do
+        d=$(cd -- "$d" && { pwd -P || pwd;  }) 2>/dev/null  # canonicalize symbolic links
+        if [ -z "$d"  ]; then continue; fi  # skip nonexistent directory
 
-dash() {
-    image=$1
-    shift
-    docker run -it $image /bin/bash "$@"
-}
-
-drun() {
-    docker run "$@"
-}
-
-drm() {
-    docker image rm -f $1
-}
-
-dmake() {
-    docker build . -t $1
+        case ":$PATH:" in
+            *":$d:"*) :;;
+            *) export PATH=$PATH:$d;;
+        esac
+    done
 }
 
 findd() {
@@ -36,61 +25,91 @@ xrm() {
     xargs rm -r
 }
 
-kbin() {
-    kpath=/opt/kafka/current/bin
-    kscripts=/Users/jared/Projects/mono/utils/kafka
+# Docker functions
+if which docker >> /dev/null; then
+    dsh() {
+        image=$1
+            shift
+            docker run -it $image /bin/sh "$@"
+    }
 
-    binary=$1
-    shift
+    dash() {
+        image=$1
+            shift
+            docker run -it $image /bin/bash "$@"
+    }
 
-    case $binary in
-    ls)
-        find $kscripts $kpath -type f -depth 1 -perm +111 | xargs basename
-        ;;
-    *)
-        export PATH=$kscripts:$kpath:$PATH
-        $binary "$@"
-        ;;
-    esac
-}
+    drun() {
+        docker run "$@"
+    }
 
-kexec() {
-    [ -z ${1} ] && echo "No target specified" && return 1
-    exe=${2:-/bin/bash}
-    PS3="Pod to exec $exe in: "
-    select pod in $(kubectl get pods | grep $1 | cut -d ' ' -f 1); do
-        kubectl exec -it ${pod} -- ${exe}
-        return 0
-    done
-}
+    drm() {
+        docker image rm -f $1
+    }
 
-klog() {
-    PS3="Pod to get logs from: "
+    dmake() {
+        docker build . -t $1
+    }
+fi;
 
-    select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+# Kubernetes functions
+if which kubectl >> /dev/null; then
+    kbin() {
+        kpath=/opt/kafka/current/bin
+        kscripts=/Users/jared/Projects/mono/utils/kafka
+
+        binary=$1
         shift
-        kubectl logs "$@" $pod
-        return 0
-    done
-}
 
-kls() {
-    if [ -z ${1:+1} ]; then
-        kubectl get pods
-    else
-        kubectl get pods | grep ${1}
-    fi
-}
+        case $binary in
+        ls)
+            find $kscripts $kpath -type f -depth 1 -perm +111 | xargs basename
+            ;;
+        *)
+            export PATH=$kscripts:$kpath:$PATH
+            $binary "$@"
+            ;;
+        esac
+    }
 
-kcp() {
-    kubectl cp $1 $2
-}
+    kexec() {
+        [ -z ${1} ] && echo "No target specified" && return 1
+        exe=${2:-/bin/bash}
+        PS3="Pod to exec $exe in: "
+        select pod in $(kubectl get pods | grep $1 | cut -d ' ' -f 1); do
+            kubectl exec -it ${pod} -- ${exe}
+            return 0
+        done
+    }
 
-kdel() {
-    PS3="Pod to restart: "
+    klog() {
+        PS3="Pod to get logs from: "
 
-    select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
-        kubectl delete pod/$pod
-        return 0
-    done
-}
+        select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+            shift
+            kubectl logs "$@" $pod
+            return 0
+        done
+    }
+
+    kls() {
+        if [ -z ${1:+1} ]; then
+            kubectl get pods
+        else
+            kubectl get pods | grep ${1}
+        fi
+    }
+
+    kcp() {
+        kubectl cp $1 $2
+    }
+
+    kdel() {
+        PS3="Pod to restart: "
+
+        select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+            kubectl delete pod/$pod
+            return 0
+        done
+    }
+fi

@@ -1,5 +1,4 @@
-[ -r $HOME/.bashrc ] && . $HOME/.bashrc
-
+### Bootstrapping
 # Install/configure SPF13 vim setup
 SPF="$HOME/.spf13-vim-3"
 if [ ! -d $SPF ]; then
@@ -15,18 +14,13 @@ case $OSTYPE in
         # Have to install themes manually to iterm2
         [ ! -d ~/.solarized ] && git clone --depth=1 https://github.com/altercation/solarized .solarized && rm -rf .solarized/.git
         [ ! -d ~/.iterm2/schemes ] && git clone --depth=1 https://github.com/mbadolato/iTerm2-Color-Schemes .iterm2/schemes  && rm -rf .iterm2/schemes/.git
-
-        add_to_PATH /usr/local/opt/python/libexec/bin
         ;;
     msys)
         ;;
     linux-gnu)
-        if [ -d $HOME/.rvm ]; then
-            add_to_PATH "$HOME/.rvm/bin"
-            [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-        fi
-
         [ ! -d ~/.dircolors ] && git clone --depth=1 https://github.com/huyz/dircolors-solarized .dircolors && rm -r .dircolors/.git
         ;;
 esac
+
+[ -r $HOME/.bashrc ] && . $HOME/.bashrc
 

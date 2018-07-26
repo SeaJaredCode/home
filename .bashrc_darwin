@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[[ $OSTYPE == darwin* ]] || exit 0
+
+function _update_ps1() {
+    PS1="$(powerline-shell $?)"
+}
+
+if [ "$TERM" != "linux" ]; then
+    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+fi
+
+function cdp() {
+    cd ~/Projects/$1
+}

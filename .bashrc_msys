@@ -1,0 +1,13 @@
+#!/bin/bash
+
+[ ${MSYSTEM-x} != x ] || exit 0
+
+if [ ! -f ~/bin/vsvars.sh ]; then
+    echo "Generating vsvars.sh"
+    . ~/bin/generate_vsvars
+fi
+
+. ~/bin/vsvars.sh
+
+export SSH_AUTH_SOCK=/tmp/keepass.sock
+

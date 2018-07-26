@@ -1,7 +1,14 @@
+### General settings
 force_color_prompt=yes
 
 # Set emacs editing mode
 set -o emacs
+
+# Set cursor type
+echo -e -n "\x1b[\x35 q"
+
+# Source a local init file
+if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
 
 # Source environment variables
 . ~/.environs
@@ -9,65 +16,42 @@ set -o emacs
 # Source aliases
 . ~/.bash_aliases
 
-# Idempotent fn to add dir to $PATH
-add_to_PATH () {
-    for d; do
-        d=$(cd -- "$d" && { pwd -P || pwd;  }) 2>/dev/null  # canonicalize symbolic links
-        if [ -z "$d"  ]; then continue; fi  # skip nonexistent directory
-
-        case ":$PATH:" in
-            *":$d:"*) :;;
-            *) export PATH=$PATH:$d;;
-        esac
-    done
-}
+# Source functions
+. ~/.bash_fns
 
 # Add ~/bin to path
 add_to_PATH ~/bin
 add_to_PATH ~/.local/bin
 
-if [ ${MSYSTEM-x} != x ]; then
-    if [ ! -f ~/bin/vsvars.sh ]; then
-        echo "Generating vsvars.sh"
-        . ~/bin/generate_vsvars
-    fi
+# Set color theme
+if [ -d ~/.dircolors ]; then eval `dircolors ~/.dircolors/dircolors.256dark`; fi;
 
-    . ~/bin/vsvars.sh
+has_git=$(which git >> /dev/null && echo $?)
+[ $has_git ] && [ -f ~/.git-completion ] && . ~/.git-completion
 
-    export SSH_AUTH_SOCK=/tmp/keepass.sock
-else
-    if [ -d ~/.dircolors ]; then eval `dircolors ~/.dircolors/dircolors.256dark`; fi;
+case $OSTYPE in
+darwin*)
+    [ -f ~/.bashrc_darwin ] && . ~/.bashrc_darwin
+    ;;
+*)
+    [ ${MSYSTEM-x} != x ] && [ -f ~/.bashrc_msys ] && . ~/.bashrc_msys
 
-    . ~/.git-completion
-
-    case $OSTYPE in
-    darwin*)
-        function _update_ps1() {
-            PS1="$(powerline-shell $?)"
-        }
-
-        if [ "$TERM" != "linux" ]; then
-            PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-        fi
-
-        function cdp() {
-            cd ~/Projects/$1
-        }
-        ;;
-    *)
+    if [ $has_git ] && [ -f ~/.git-prompt ]; then
         . ~/.git-prompt
-
         export PS1="\[\033[32m\]\u@\h \[\033[33m\]\w\[\033[36m\]$(__git_ps1 " (%s)")\[\033[0m\]\n\$ "
-        ;;
-    esac
-fi;
+    fi
+    ;;
+esac
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -d $HOME/.rvm ]; then
+    add_to_PATH "$HOME/.rvm/bin"
+    # Load RVM into a shell session as a function
+    [ -s "$HOME/.rvm/scripts/rvm" ] && source "$HOME/.rvm/scripts/rvm"
+fi
 
-. ~/.bash_fns
-echo -e -n "\x1b[\x35 q"
-
-if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
+if [ -d $HOME/.nvm ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+fi
 
