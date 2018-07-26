@@ -86,3 +86,4 @@ WorkDocs/
 .minikube/
 .boto
 .gsutil/
+.VSCodeVim/

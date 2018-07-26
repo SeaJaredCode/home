@@ -69,5 +69,5 @@ export NVM_DIR="$HOME/.nvm"
 . ~/.bash_fns
 echo -e -n "\x1b[\x35 q"
 
-if [ -e .bashrc_local ]; then source .bashrc_local 2> /dev/null; fi
+if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
 
