@@ -19,7 +19,7 @@ case $OSTYPE in
         alias cdalt='cd /c/git/alt-main'
         ;;
     linux-gnu)
-        [ $('grep -qi Microsoft /proc/sys/kernel/osrelease 2> /dev/null') ] && alias ca-client='winpty ca-client'
+        [ $(grep -qi Microsoft /proc/sys/kernel/osrelease 2> /dev/null) ] && alias ca-client='winpty ca-client'
         ;;
 esac
 

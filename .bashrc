@@ -34,7 +34,7 @@ darwin*)
     [ -f ~/.bashrc_darwin ] && . ~/.bashrc_darwin
     ;;
 *)
-    [ ${MSYSTEM-x} != x ] && [ -f ~/.bashrc_msys ] && . ~/.bashrc_msys
+    [ ! -z ${MSYSTEM} ] && [ -f ~/.bashrc_msys ] && . ~/.bashrc_msys
 
     if [ $has_git ] && [ -f ~/.git-prompt ]; then
         . ~/.git-prompt
