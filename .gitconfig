@@ -5,7 +5,7 @@
     autocrlf = false
     excludesfile = ~/.gitignore
     fscahce = true
-    ignorecase = false
+	ignorecase = true
 [include]
     path=~/.gitalias
 [diff]

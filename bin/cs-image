@@ -1,0 +1,58 @@
+#!/bin/bash
+
+resolvePath() {
+    echo $(dirname "$1")/$(basename "$1")
+}
+
+attach() {
+	[ $# -ne 2 ] && showhelp && exit 1
+    hdiutil attach -mountpoint "$(resolvePath $1)" "$(resolvePath $2)"
+    # hdiutil attach -mountpoint $(resolvePath \"$1\") $(resolvePath \"$2\")
+}
+
+create() {
+	[ $# -ne 2 ] && showhelp && exit 1
+    hdiutil create -type SPARSEBUNDLE -fs 'Case-sensitive Journaled HFS+' -size 100g -volname "$1" $(resolvePath "$2")
+}
+
+detach() {
+	[ $# -ne 1 ] && showhelp && exit 1
+    dev=$(hdiutil info | grep "$(resolvePath $1)" | cut -f1)
+    if [ ! -z "$dev" ]; then
+        hdiutil detach "$dev"
+    fi
+}
+
+compact() {
+	[ $# -ne 1 ] && showhelp && exit 1
+	# Should detach first
+    hdiutil compact ${resolvePath "$1"} -batteryallowed
+}
+
+showHelp() {
+	[ $# -ge 1 ] && echo "$@"
+
+	printf "Usage: $(basename "$0") MODE [PARAMS ...]\n\n"
+	printf "Where MODE is one of:\n"
+	printf "\tcreate VOLUMENAME IMAGE_DIR     Creates an empty image\n"
+	printf "\tattach MOUNTPOINT IMAGE_DIR     Attaches an image\n"
+	printf "\tdetach MOUNTPOINT               Detaches the image\n"
+	printf "\tcompact IMAGE_DIR               Compacts the image\n"
+}
+
+mode=$1
+shift
+
+case "$mode" in
+    -c|create)
+		create "$1" "$2";;
+    -a|attach)
+		attach "$1" "$2";;
+    -d|detach)
+		detach "$1";;
+    -z|compact)
+		compact "$1";;
+    -h|--help|*)
+		showHelp;;
+esac
+
