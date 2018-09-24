@@ -14,4 +14,5 @@ source $gcloud_bin/completion.bash.inc
 printf "Done!\n"
 unset gcloud_bin mono
 
+export PANTS_REPL_SCALA_MAIN=ammonite.Main
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)

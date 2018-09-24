@@ -112,4 +112,12 @@ if which kubectl >> /dev/null; then
             return 0
         done
     }
+
+    kcon() {
+        PS3="Choose context: "
+        select context in $(kubectl config get-contexts | tail -n +2 |  grep "$1" | tr -s ' ' | cut -d ' ' -f 2); do
+            kubectl config use-context $context
+            return 0
+        done
+    }
 fi

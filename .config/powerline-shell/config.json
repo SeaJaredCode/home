@@ -10,6 +10,7 @@
     "git",
     "aws_profile",
     "jobs",
+    "~/.config/powerline-shell/kube.py",
     "newline",
     "username",
     "hostname",
