@@ -21,6 +21,8 @@
 [mergetool "p4merge"]
     trustExitCode = false
     cmd = p4merge -nb \"Common:\" -nl \"Your:\" -nr \"Their:\" -nm \"Resolved:\" \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+[pull]
+    rebase = true
 [push]
     default = simple
 [rerere]

@@ -1,7 +1,6 @@
 {
   "battery": "always_show_percentage",
   "hostname": {
-      "colorize": "true"
   },
   "segments": [
     "time",

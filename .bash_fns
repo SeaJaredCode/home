@@ -52,8 +52,7 @@ if which docker >> /dev/null; then
     }
 fi;
 
-# Kubernetes functions
-if which kubectl >> /dev/null; then
+if [ -d /var/kafka ] || [ -d /opt/kafka  ]; then
     kbin() {
         kpath=/opt/kafka/current/bin
         kscripts=/Users/jared/Projects/mono/utils/kafka
@@ -71,25 +70,41 @@ if which kubectl >> /dev/null; then
             ;;
         esac
     }
+fi
 
+# Kubernetes functions
+if which kubectl >> /dev/null; then
     kexec() {
         [ -z ${1} ] && echo "No target specified" && return 1
         exe=${2:-/bin/bash}
         PS3="Pod to exec $exe in: "
-        select pod in $(kubectl get pods | grep $1 | cut -d ' ' -f 1); do
-            kubectl exec -it ${pod} -- ${exe}
-            return 0
-        done
+
+        pods=$(kubectl get pods | grep $1 | cut -d ' ' -f 1)
+        if [ $(echo "$pods" | wc -l) -eq 1 ]; then
+            pod=${pods}
+        else
+            select pod in ${pods}; do
+                break
+            done
+        fi
+
+        kubectl exec -it ${pod} -- ${exe}
     }
 
     klog() {
         PS3="Pod to get logs from: "
 
-        select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
-            shift
-            kubectl logs "$@" $pod
-            return 0
-        done
+        pods=$(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1)
+        if [ $(echo "${pods}" | wc -l) -eq 1 ]; then
+            pod=${pods}
+        else
+            select pod in ${pods}; do
+                break
+            done
+        fi
+
+        shift
+        kubectl logs "$@" ${pod}
     }
 
     kls() {
@@ -115,9 +130,40 @@ if which kubectl >> /dev/null; then
 
     kcon() {
         PS3="Choose context: "
-        select context in $(kubectl config get-contexts | tail -n +2 |  grep "$1" | tr -s ' ' | cut -d ' ' -f 2); do
-            kubectl config use-context $context
-            return 0
-        done
+        contexts=$(kubectl config get-contexts | tail -n +2 |  grep "$1" | tr -s ' ' | cut -d ' ' -f 2)
+        if [ $(echo "$contexts" | wc -l) -eq 1 ]; then
+            ctx=${contexts}
+        else
+            select ctx in ${contexts}; do
+                break
+            done
+        fi
+
+        kubectl config use-context $ctx
+    }
+
+    ksecret() {
+        if [ $# -lt 1 ]; then
+            PS3="Choose a secret: "
+            select s in $(kubectl get secret | cut -d ' ' -f 1); do
+                secret=${s}
+                break
+            done
+        else
+            secret=$1
+        fi
+
+        if [ $# -lt 2 ]; then
+            PS3="Choose an entry: "
+            select e in $(kubectl get secrets/${secret} -o json | jq -r '.data | keys | .[]'); do
+                entry=$e
+                break
+            done
+        else
+            entry=$2
+        fi
+
+        kubectl get secrets/${secret} -o json | jq -r ".data | .\"${entry}\"" | base64 -D
+        echo ""
     }
 fi

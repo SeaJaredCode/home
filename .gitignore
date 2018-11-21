@@ -80,3 +80,7 @@ WorkDocs/
 *.pyc
 *~
 .bigqueryrc
+.azure/
+.zoomus/
+Projects
+eBooks/

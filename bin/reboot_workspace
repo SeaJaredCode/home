@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -z $1 ] && echo "Usage $(basenane $0) USERLOGIN" && exit 0
+
+read -r directory workspace << EOF
+    $(aws workspaces describe-workspaces | jq -r ".Workspaces | .[] | select(.UserName == \"$1\") | .DirectoryId, .WorkspaceId" | xargs echo)
+EOF
+
+[ -z "${workspace}" ] && echo "Did not find user in list:\n\n$(aws workspaces describe-workspaces | jq -r '.Workspaces | .[] | .UserName')\n" && exit 0
+
+echo "Rebooting workspace $workspace in directory $directory"
+aws workspaces reboot-workspaces --reboot-workspace-requests ${workspace}
