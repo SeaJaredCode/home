@@ -25,6 +25,10 @@ xrm() {
     xargs rm -r
 }
 
+echo_error() {
+    cat <<< "$@" 1>&2
+}
+
 # Docker functions
 if which docker >> /dev/null; then
     dsh() {
@@ -165,5 +169,72 @@ if which kubectl >> /dev/null; then
 
         kubectl get secrets/${secret} -o json | jq -r ".data | .\"${entry}\"" | base64 -D
         echo ""
+    }
+
+    kjls(){
+        if [ -z ${1:+1} ]; then
+            kubectl get cronjobs
+        else
+            kubectl get cronjobs | grep ${1}
+        fi
+    }
+
+    kjchoose(){
+        PS3="Choose job: "
+        jobs=$(kubectl get cronjobs  | tail -n +2 | grep "${pattern}" | cut -d ' ' -f 1)
+        if [ $(echo "${jobs}" | wc -l) -eq 1 ]; then
+            job=${jobs}
+        else
+            select job in ${jobs}; do
+                break
+            done
+        fi
+        echo ${job}
+    }
+
+    kjstart(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjchoose ${pattern})
+
+        kubectl create job --from=cronjob/${job} ${job}-m-$(date +%s)
+    }
+
+    kjobs(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjchoose ${pattern})
+
+        kubectl get job | grep "^${job}"
+    }
+
+    kjlog() {
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjlast ${pattern} | cut -d ' ' -f 1)
+
+        klog ${job} "$@"
+    }
+
+    kjlast(){
+        kjobs $1 | tail -n 1
+    }
+
+    kjerror(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        kubectl get jobs | grep "$pattern" | tr -s ' ' | cut -d ' ' -f 1,3 | grep " 0" | cut -d ' ' -f 1 || echo_error "No failed jobs"
     }
 fi
