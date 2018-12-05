@@ -11,5 +11,20 @@ if [ "$TERM" != "linux" ]; then
 fi
 
 function cdp() {
-    cd ~/Projects/$1
+    projects_path=~/Projects/
+
+    [ "$1" == "x" ] && projects_path="${projects_path}/extern/" && shift
+
+    projects=$(cd "${projects_path}"; find . -maxdepth 1 -type d | grep "$1" | cut -c 3- | grep '^[a-zA-Z0-9]')
+    if [ $(echo "$projects" | wc -l) -eq 1 ]; then
+        project="${projects}"
+    else
+        PS3="Choose a project: "
+        select project in $projects; do
+            break
+        done
+    fi
+
+    cd "${projects_path}/${project}"
+    unset projects_path projects project
 }

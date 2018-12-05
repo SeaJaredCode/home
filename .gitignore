@@ -84,3 +84,4 @@ WorkDocs/
 .zoomus/
 Projects
 eBooks/
+*.json
