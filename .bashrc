@@ -7,9 +7,6 @@ set -o emacs
 # Set cursor type
 echo -e -n "\x1b[\x35 q"
 
-# Source a local init file
-if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
-
 # Source environment variables
 . ~/.environs
 
@@ -22,6 +19,9 @@ if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1
 # Add ~/bin to path
 add_to_PATH ~/bin
 add_to_PATH ~/.local/bin
+
+# Source a local init file
+if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
 
 # Set color theme
 if [ -d ~/.dircolors ]; then eval `dircolors ~/.dircolors/dircolors.256dark`; fi;

@@ -4,6 +4,7 @@ source $gcloud_bin/path.bash.inc
 printf "Installing completions..."
 mono=~/Projects/mono
 source <($mono/sc -f)
+source <($mono/pants -f)
 
 source $(brew --prefix)/etc/bash_completion
 
