@@ -1,0 +1,198 @@
+#!/bin/bash
+
+echo_error() {
+    cat <<< "$@" 1>&2
+}
+
+# Kubernetes functions
+if which kubectl >> /dev/null; then
+    kexec() {
+        [ -z ${1} ] && echo "No target specified" && return 1
+        exe=${2:-/bin/bash}
+        PS3="Pod to exec $exe in: "
+
+        pods=$(kubectl get pods | grep $1 | cut -d ' ' -f 1)
+        if [ $(echo "$pods" | wc -l) -eq 1 ]; then
+            pod=${pods}
+        else
+            select pod in ${pods}; do
+                break
+            done
+        fi
+
+        kubectl exec -it ${pod} -- ${exe}
+    }
+    export -f kexec
+
+    klog() {
+        PS3="Pod to get logs from: "
+
+        pods=$(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1)
+        if [ $(echo "${pods}" | wc -l) -eq 1 ]; then
+            pod=${pods}
+        else
+            select pod in ${pods}; do
+                break
+            done
+        fi
+
+        shift
+        kubectl logs "$@" ${pod}
+    }
+    export -f klog
+
+    kls() {
+        if [ -z ${1:+1} ]; then
+            kubectl get pods
+        else
+            kubectl get pods | grep ${1}
+        fi
+    }
+    export -f kls
+
+    kcp() {
+        kubectl cp $1 $2
+    }
+    export -f kcp
+
+    kdel() {
+        if [ -z $1 ]; then
+            echo_error "Reading list from pipe..."
+            unset line
+            while read line; do
+                pod="$(echo "${line}" | cut -d ' ' -f 1)"
+                printf "Do you want to delete ${pod}? [yN] "
+                read input < /dev/tty
+                if [ "$input" == "y" ]; then
+                    kubectl delete pod/$pod
+                else
+                    echo "Skipping pod."
+                fi
+            done
+            [ -z "$line" ] && echo "No pods to delete."
+        else
+            PS3="Pod to restart: "
+
+            select pod in $(kubectl get pods | tail -n +2 | grep "$1" | cut -d ' ' -f 1); do
+                kubectl delete pod/$pod
+                return 0
+            done
+        fi
+    }
+    export -f kdel
+
+    kcon() {
+        PS3="Choose context: "
+        contexts=$(kubectl config get-contexts | tail -n +2 |  grep "$1" | tr -s ' ' | cut -d ' ' -f 2)
+        if [ $(echo "$contexts" | wc -l) -eq 1 ]; then
+            ctx=${contexts}
+        else
+            select ctx in ${contexts}; do
+                break
+            done
+        fi
+
+        kubectl config use-context $ctx
+    }
+    export -f kcon
+
+    ksecret() {
+        if [ $# -lt 1 ]; then
+            PS3="Choose a secret: "
+            select s in $(kubectl get secret | cut -d ' ' -f 1); do
+                secret=${s}
+                break
+            done
+        else
+            secret=$1
+        fi
+
+        if [ $# -lt 2 ]; then
+            PS3="Choose an entry: "
+            select e in $(kubectl get secrets/${secret} -o json | jq -r '.data | keys | .[]'); do
+                entry=$e
+                break
+            done
+        else
+            entry=$2
+        fi
+
+        kubectl get secrets/${secret} -o json | jq -r ".data | .\"${entry}\"" | base64 -D
+        echo ""
+    }
+    export -f ksecret
+
+    kjls(){
+        if [ -z ${1:+1} ]; then
+            kubectl get cronjobs
+        else
+            kubectl get cronjobs | grep ${1}
+        fi
+    }
+    export -f kjls
+
+    kjchoose(){
+        PS3="Choose job: "
+        jobs=$(kubectl get cronjobs  | tail -n +2 | grep "${pattern}" | cut -d ' ' -f 1)
+        if [ $(echo "${jobs}" | wc -l) -eq 1 ]; then
+            job=${jobs}
+        else
+            select job in ${jobs}; do
+                break
+            done
+        fi
+        echo ${job}
+    }
+    export -f kjchoose
+
+    kjstart(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjchoose ${pattern})
+
+        kubectl create job --from=cronjob/${job} ${job}-m-$(date +%s)
+    }
+    export -f kjstart
+
+    kjobs(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjchoose ${pattern})
+
+        kubectl get job | grep "^${job}"
+    }
+    export -f kjobs
+
+    kjlog() {
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        job=$(kjlast ${pattern} | cut -d ' ' -f 1)
+
+        klog ${job} "$@"
+    }
+    export -f kjlog
+
+    kjlast(){
+        kjobs $1 | tail -n 1
+    }
+    export -f kjlast
+
+    kjerror(){
+        if [ $# -gt 0 ] && [ "$1" != "-f" ]; then
+            pattern="$1"
+            shift 1
+        fi
+
+        kubectl get jobs | grep "$pattern" | tr -s ' ' | cut -d ' ' -f 1,3 | grep " 0" | cut -d ' ' -f 1 || echo_error "No failed jobs"
+    }
+    export -f kjerror
+fi
