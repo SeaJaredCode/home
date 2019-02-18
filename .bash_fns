@@ -84,5 +84,5 @@ fi
 
 # Kubernetes functions
 if which kubectl >> /dev/null; then
-    source .kube_fns
+    source ~/.kube_fns
 fi
