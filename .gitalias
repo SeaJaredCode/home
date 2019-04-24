@@ -1,5 +1,6 @@
 [alias]
     a = add -A
+    u = add -u
     b = branch
     bc = branch --contains
     bC = branch -r --contains
@@ -51,3 +52,21 @@
             fi; \
         };f"
     l = !do_git_log
+    ri = "!f() {\
+            if [ -z "$1" ]; then \
+                git rebase -i origin/master; \
+            else \
+                git rebase -i "$@"; \
+            fi; \
+        };f"
+    rc = rebase --continue
+    ra = rebase --abort
+    pex = "!f() {\
+            if [ -z "$1" ]; then \
+                echo "Usage: pex NUM_COMMITS"; \
+                echo -"     Where NUM_COMMITS is how many commits back from head"; \
+                return 1; \
+            fi; \
+            git push origin HEAD~$1:master; \
+        };f"
+

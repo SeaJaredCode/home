@@ -20,7 +20,11 @@ if which kubectl >> /dev/null; then
             done
         fi
 
-        kubectl exec -it ${pod} -- ${exe}
+        if [ -z $pod ]; then
+            return 1
+        else
+            kubectl exec -it ${pod} -- ${exe}
+        fi
     }
     export -f kexec
 
@@ -42,11 +46,30 @@ if which kubectl >> /dev/null; then
     export -f klog
 
     kls() {
-        if [ -z ${1:+1} ]; then
+        while [ ! -z "$1" ]; do
+            case "$1" in
+                -h | --help)
+                    echo "Usage: kls OPTIONS [POD_SEARCH]"
+                    echo ""
+                    echo "Where POD_SEARCH is a string to match from a pod list (includes default columns)."
+                    echo ""
+                    echo "OPTIONS:"
+                    echo "    -h | --help      Print this message"
+                    shift $#
+                    return 0
+                    ;;
+                *)
+                    pod_search="$@"
+                    shift $#
+            esac
+        done
+
+        if [ -z "${pod_search:+x}" ]; then
             kubectl get pods
         else
-            kubectl get pods | grep ${1}
+            kubectl get pods | grep "${pod_search}"
         fi
+        unset pod_search
     }
     export -f kls
 
@@ -55,6 +78,9 @@ if which kubectl >> /dev/null; then
     }
 
     first_field() {
+        if [ "${1}" == "-h" ]; then
+            echo "first_field reads from stdin and returns the first field in the line separated by a space."
+        fi
         while read line; do
             echo $line | cut -d ' ' -f 1
         done
@@ -68,6 +94,10 @@ if which kubectl >> /dev/null; then
     kdel() {
         while [ ! -z "$1" ]; do
             case "$1" in
+                -f | --force)
+                    force=1
+                    shift
+                    ;;
                 -q | --quiet)
                     quiet=1
                     shift
@@ -76,13 +106,25 @@ if which kubectl >> /dev/null; then
                     stdin=1
                     shift
                     ;;
+                -h | --help)
+                    echo "Usage: kdel OPTIONS [POD_SEARCH]"
+                    echo ""
+                    echo "Where POD_SEARCH is a string to match from a pod list (includes default columns)."
+                    echo ""
+                    echo "OPTIONS:"
+                    echo "    -  | --stdin     Read list of pods from stdin."
+                    echo "    -f | --force     Forcibly remove the pod."
+                    echo "    -q | --quiet     Do no confirm pod to delete."
+                    echo "    -h | --help      Print this message"
+                    shift
+                    ;;
                 *)
-                    pod="$@"
+                    pod_search="$@"
                     shift $#
             esac
         done
 
-        if [ -z "$stdin" ]; then
+        if ! [ -z "$stdin" ]; then
             echo_error "Reading list from stdin..."
             unset line
             while read line; do
@@ -90,16 +132,18 @@ if which kubectl >> /dev/null; then
                 delete_pod $pod
             done
             [ -z "$line" ] && echo "No pods to delete."
-        else
+        elif ! [ -z "${pod_search:+x}" ]; then
             PS3="Pod to delete: "
 
-            select pod in $(klspod "$1"); do
+            select pod in $(klspod "$pod_search"); do
                 delete_pod $pod
                 return 0
             done
+        else
+            echo "No pod search specified. Are you trying to read from stdin?"
         fi
 
-        unset quiet
+        unset quiet force
     }
     export -f kdel
 
@@ -112,11 +156,11 @@ if which kubectl >> /dev/null; then
 
             if [ "$input" != "y" ]; then
                 echo "Skipping pod"
-                exit
+                return
             fi
         fi
 
-        kubectl delete pod/$pod
+        kubectl delete pod/$pod ${force:+--force --grace-period=0}
         unset pod
     }
 
@@ -237,4 +281,9 @@ if which kubectl >> /dev/null; then
         kubectl get jobs | grep "$pattern" | tr -s ' ' | cut -d ' ' -f 1,3 | grep " 0" | first_field|| echo_error "No failed jobs"
     }
     export -f kjerror
+
+    kcurl(){
+        pod_name=${USER}-curl
+        kexec $pod_name || kubectl run $pod_name --image=spotify/alpine -it --rm -- /bin/sh
+    }
 fi

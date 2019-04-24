@@ -10,6 +10,7 @@
     "aws_profile",
     "jobs",
     "~/.config/powerline-shell/kube.py",
+    "virtual_env",
     "newline",
     "username",
     "hostname",

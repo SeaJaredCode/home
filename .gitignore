@@ -84,3 +84,12 @@ WorkDocs/
 .zoomus/
 Projects
 eBooks/
+.Xauthority
+.bazel/
+.conda/
+.ipython/
+.jupyter/
+.miniconda3/
+.pex/
+.pylint.d/
+.keras/

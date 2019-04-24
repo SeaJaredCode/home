@@ -39,6 +39,8 @@ alias ghist='history | grep '
 alias top='htop'
 alias myip='curl http://ipecho.net/plain; echo'
 
+which kubectl > /dev/null 2>&1 && alias kc='kubectl'
+
 # bash functions that are essentially aliases with parameters
 aws-refresh-token() { eval `aws-sts $1`; }
 
