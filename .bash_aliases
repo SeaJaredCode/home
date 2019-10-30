@@ -23,7 +23,6 @@ case $OSTYPE in
         ;;
 esac
 
-alias check='sudo mtr google.com'
 alias ls='$LS -F --color=auto --show-control-chars'
 alias ll='ls -ahl'
 alias lsl='ll --color | less'

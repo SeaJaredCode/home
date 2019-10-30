@@ -93,3 +93,6 @@ eBooks/
 .pex/
 .pylint.d/
 .keras/
+.bazel_binaries/
+.sdkman/
+Google Drive File Stream

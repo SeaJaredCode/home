@@ -69,4 +69,4 @@
             fi; \
             git push origin HEAD~$1:master; \
         };f"
-
+    rm = rm --cached

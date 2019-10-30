@@ -1,3 +1,11 @@
+[[ $- == *i* ]] || return
+
+# In case we got here without profile being loaded...
+if [ -z $_PROFILE ]; then
+    printf "Profile not loaded as expected. Trying again." 1>&2
+    [ -r "~/.profile" ] && source "~/.profile"
+fi
+
 ### General settings
 force_color_prompt=yes
 
@@ -21,10 +29,11 @@ add_to_PATH ~/bin
 add_to_PATH ~/.local/bin
 
 # Source a local init file
-if [ -e ~/.bashrc_$HOSTNAME ]; then source ~/.bashrc_$HOSTNAME >> /dev/null 2>&1; fi
+HOST=$(echo $HOSTNAME | cut -d '.' -f 1)
+if [ -e ~/.bashrc_$HOST ]; then source ~/.bashrc_$HOST >> /dev/null 2>&1; fi
 
 # Set color theme
-if [ -d ~/.dircolors ]; then eval `dircolors ~/.dircolors/dircolors.256dark`; fi;
+if [ -d ~/.dircolors ]; then eval $(dircolors ~/.dircolors/dircolors.256dark); fi;
 
 has_git=$(which git >> /dev/null && echo $?)
 [ $has_git ] && [ -f ~/.git-completion ] && . ~/.git-completion

@@ -1,19 +1,26 @@
+printf "Running local"
 gcloud_bin=$(dirname $(dirname $(ls -l /usr/local/bin/gcloud | sed -e 's/.* -> //')))
 source $gcloud_bin/path.bash.inc
 
 printf "Installing completions..."
 mono=~/Projects/mono
-source <($mono/sc -f)
-source <($mono/pants -f)
+[ -f "$mono/sc" ] && source <($mono/sc -f)
+[ -f "$mono/pants" ] && source <($mono/pants -f)
+[ -f "~/.bazel/bin/bazel-completion.bash" ] && source <(~/.bazel/bin/bazel-completion.bash)
+[ -f "$mono/bzl" ] && source <($mono/bzl -f)
 
 source $(brew --prefix)/etc/bash_completion
 
 source <(kubectl completion bash)
 source <(helm completion bash)
-source <($mono/pants bash-completion)
-source $gcloud_bin/completion.bash.inc
+# source <($mono/pants bash-completion)
+[ -f "$mono/bzl" ] && source <($mono/bzl -c)
+source "$gcloud_bin/completion.bash.inc"
 printf "Done!\n"
 unset gcloud_bin mono
 
 export PANTS_REPL_SCALA_MAIN=ammonite.Main
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+
+# Actually, use sdkman to set all managed versions (java)
+source ~/.sdkman/bin/sdkman-init.sh

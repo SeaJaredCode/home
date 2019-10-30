@@ -1,5 +1,6 @@
 ### Bootstrapping
 # Install/configure SPF13 vim setup
+_PROFILE=1
 SPF="$HOME/.spf13-vim-3"
 if [ ! -d $SPF ]; then
     git clone --depth=1 https://github.com/spf13/spf13-vim.git $SPF
@@ -22,5 +23,5 @@ case $OSTYPE in
         ;;
 esac
 
-[ -r $HOME/.bashrc ] && . $HOME/.bashrc
+[ -r $HOME/.bashrc ] && source $HOME/.bashrc
 

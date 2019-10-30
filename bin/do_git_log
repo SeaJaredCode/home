@@ -11,5 +11,5 @@ then
     fi
 fi
 
-git log -$n $b
+git log --stat -$n $b
 

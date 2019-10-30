@@ -67,7 +67,7 @@ if which kubectl >> /dev/null; then
         if [ -z "${pod_search:+x}" ]; then
             kubectl get pods
         else
-            kubectl get pods | grep "${pod_search}"
+            kubectl get pods | grep -P "${pod_search}"
         fi
         unset pod_search
     }
