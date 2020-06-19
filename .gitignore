@@ -96,3 +96,9 @@ eBooks/
 .bazel_binaries/
 .sdkman/
 Google Drive File Stream
+.clojure/
+.lein/
+.m2/
+.scala_history_jline3
+.unison/
+Personal/

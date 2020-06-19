@@ -21,6 +21,7 @@ unset gcloud_bin mono
 
 export PANTS_REPL_SCALA_MAIN=ammonite.Main
 export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+export CLOUDSDK_PYTHON=python3
 
 # Actually, use sdkman to set all managed versions (java)
 source ~/.sdkman/bin/sdkman-init.sh

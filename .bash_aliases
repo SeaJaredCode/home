@@ -46,3 +46,5 @@ aws-refresh-token() { eval `aws-sts $1`; }
 alias login_docker="aws ecr get-login --no-include-email --region us-west-2|cut -d ' ' -f 6| docker login -u AWS --password-stdin https://324842975178.dkr.ecr.us-west-2.amazonaws.com"
 alias amm="amm --no-remote-logging"
 alias gource="gource --auto-skip-seconds 0.1 --seconds-per-day 0.5 --camera-mode track --dont-stop"
+[ -d /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/ ] && alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
+
