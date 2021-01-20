@@ -18,7 +18,8 @@
     cm = checkout -m
     cp = cherry-pick
     cb = "!f() {\
-            git checkout -b $1 origin/master;\
+            b=$(find $(git rev-parse --git-dir)/refs/remotes/origin \\( -name master -o -name main \\) -printf "%f\n");\
+            echo git checkout -b $1 origin/$b;\
         };f"
     cbr = "!f() {\
             gerrit_create_branch origin $1 master;\
@@ -54,13 +55,11 @@
     l = !do_git_log
     ri = "!f() {\
             if [ -z "$1" ]; then \
-                git rebase -i origin/master; \
+                rebase -i origin/master; \
             else \
-                git rebase -i "$@"; \
+                rebase -i "$@"; \
             fi; \
         };f"
-    rc = rebase --continue
-    ra = rebase --abort
     pex = "!f() {\
             if [ -z "$1" ]; then \
                 echo "Usage: pex NUM_COMMITS"; \
@@ -69,4 +68,4 @@
             fi; \
             git push origin HEAD~$1:master; \
         };f"
-    rm = rm --cached
+

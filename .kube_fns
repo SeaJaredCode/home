@@ -201,7 +201,7 @@ if which kubectl >> /dev/null; then
             entry=$2
         fi
 
-        secret=$(kubectl get secrets/${secret} -o json | jq -r ".data | .\"${entry}\"" | base64 -D)
+        secret=$(kubectl get secrets/${secret} -o json | jq -r ".data | .\"${entry}\"" | base64 -d)
         echo "$secret" | pbcopy
         echo "Secret copied to clipboard"
         unset secret

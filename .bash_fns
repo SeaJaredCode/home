@@ -2,13 +2,24 @@
 
 # Idempotent fn to add dir to $PATH
 add_to_PATH () {
+    if [ "$1" == "--prepend" ]; then
+        prepend="1"
+        shift
+    fi
+
     for d; do
         d=$(cd -- "$d" && { pwd -P || pwd;  }) 2>/dev/null  # canonicalize symbolic links
         if [ ! -d "$d"  ]; then continue; fi  # skip nonexistent directory
 
         case ":$PATH:" in
             *":$d:"*) :;;
-            *) export PATH=$PATH:$d;;
+            *)
+                if [ "$prepend" == "1" ]; then
+                    export PATH=$d:$PATH
+                else
+                    export PATH=$PATH:$d
+                fi
+                ;;
         esac
     done
 }

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+joke=$(curl https://icanhazdadjoke.com 2> /dev/null || echo "Why can't we have nice things? Because the Internet is broken...")
+echo $joke

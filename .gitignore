@@ -102,3 +102,6 @@ Google Drive File Stream
 .scala_history_jline3
 .unison/
 Personal/
+.bundle/
+.cabal/
+.ghcup/

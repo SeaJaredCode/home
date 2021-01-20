@@ -26,6 +26,7 @@ echo -e -n "\x1b[\x35 q"
 
 # Add ~/bin to path
 add_to_PATH ~/bin
+add_to_PATH --prepend ~/bin/local
 add_to_PATH ~/.local/bin
 
 # Source a local init file

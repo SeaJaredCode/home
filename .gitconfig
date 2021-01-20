@@ -29,6 +29,7 @@
     enabled = true
 [alias]
 	where = branch -r --contains
+	dad = !curl https://icanhazdadjoke.com/
 [filter "lfs"]
 	process = git-lfs filter-process
 	required = true
