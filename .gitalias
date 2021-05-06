@@ -19,7 +19,7 @@
     cp = cherry-pick
     cb = "!f() {\
             b=$(find $(git rev-parse --git-dir)/refs/remotes/origin \\( -name master -o -name main \\) -printf "%f\n");\
-            echo git checkout -b $1 origin/$b;\
+            git checkout -b $1 origin/$b;\
         };f"
     cbr = "!f() {\
             gerrit_create_branch origin $1 master;\

@@ -1,5 +1,5 @@
 printf "Running local"
-gcloud_bin=$(dirname $(dirname $(ls -l /usr/local/bin/gcloud | sed -e 's/.* -> //')))
+gcloud_bin=$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
 source $gcloud_bin/path.bash.inc
 
 printf "Installing completions..."
@@ -8,13 +8,11 @@ mono=~/Projects/mono
 [ -f "$mono/pants" ] && source <($mono/pants -f)
 [ -f "~/.bazel/bin/bazel-completion.bash" ] && source <(~/.bazel/bin/bazel-completion.bash)
 [ -f "$mono/bzl" ] && source <($mono/bzl -f)
+[ -f "$mono/bzl" ] && source <($mono/bzl -c)
 
 source $(brew --prefix)/etc/bash_completion
-
 source <(kubectl completion bash)
 source <(helm completion bash)
-# source <($mono/pants bash-completion)
-[ -f "$mono/bzl" ] && source <($mono/bzl -c)
 source "$gcloud_bin/completion.bash.inc"
 printf "Done!\n"
 unset gcloud_bin mono
