@@ -55,17 +55,20 @@
     l = !do_git_log
     ri = "!f() {\
             if [ -z "$1" ]; then \
-                rebase -i origin/master; \
+                git rebase -i origin/master; \
             else \
-                rebase -i "$@"; \
+                git rebase -i "$@"; \
             fi; \
         };f"
+    rc = rebase --continue
+    ra = rebase --abort
     pex = "!f() {\
             if [ -z "$1" ]; then \
                 echo "Usage: pex NUM_COMMITS"; \
                 echo -"     Where NUM_COMMITS is how many commits back from head"; \
                 return 1; \
             fi; \
-            git push origin HEAD~$1:master; \
+            rb=$(git for-each-ref --format='%(upstream:short)' "$(git symbolic-ref -q HEAD)" | cut -d "/" -f 2-); \
+            git push origin HEAD~$1:$rb; \
         };f"
-
+    mt = mergetool

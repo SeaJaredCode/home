@@ -1,0 +1,29 @@
+printf "Running local"
+gcloud_bin=$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
+source $gcloud_bin/path.bash.inc
+
+printf "Installing completions..."
+mono=~/Projects/mono
+[ -f "$mono"/sc ] && source <($mono/sc -f) >> /dev/null 2>&1
+[ -f "$mono"/pants ] && source <($mono/pants -f)
+[ -f ~/.bazel/bin/bazel-complete.bash ] && source ~/.bazel/bin/bazel-complete.bash
+[ -f "$mono"/bzl ] && source <($mono/bzl -f) && source <($mono/bzl -c)
+
+source $(brew --prefix)/etc/bash_completion
+source <(kubectl completion bash)
+source <(helm completion bash)
+source "$gcloud_bin"/completion.bash.inc
+printf "Done!\n"
+unset gcloud_bin mono
+
+#export PANTS_REPL_SCALA_MAIN=ammonite.Main
+#export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+export CLOUDSDK_PYTHON=python3
+
+# Actually, use sdkman to set all managed versions (java)
+source ~/.sdkman/bin/sdkman-init.sh
+
+# python stuff
+add_to_PATH ~/.pyenv/shims
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"

@@ -11,8 +11,9 @@ mono=~/Projects/mono
 [ -f "$mono/bzl" ] && source <($mono/bzl -c)
 
 source $(brew --prefix)/etc/bash_completion
-source <(kubectl completion bash)
-source <(helm completion bash)
+which kubectl >> /dev/null  && source <(kubectl completion bash)
+which helm >> /dev/null && source <(helm completion bash)
+which gh >> /dev/null && source <(gh completion -s bash)
 source "$gcloud_bin/completion.bash.inc"
 printf "Done!\n"
 unset gcloud_bin mono
@@ -23,3 +24,5 @@ export CLOUDSDK_PYTHON=python3
 
 # Actually, use sdkman to set all managed versions (java)
 source ~/.sdkman/bin/sdkman-init.sh
+
+add_to_PATH /Library/TeX/texbin

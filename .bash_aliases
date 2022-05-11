@@ -11,6 +11,7 @@ case $OSTYPE in
         alias dircolors='gdircolors'
         alias cdgit='cd ~/Projects'
         alias cdm='cd ~/Projects/mono'
+        alias cdr='cd "$(git rev-parse --show-toplevel 2>> /dev/null)"'
         ;;
     msys)
         alias cdmain='cd /c/git/main'

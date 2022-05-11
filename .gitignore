@@ -105,3 +105,14 @@ Personal/
 .bundle/
 .cabal/
 .ghcup/
+.ghc/
+
+.kube/
+.nvm/
+.pyenv/
+.zsh_*
+.node_repl_history
+.volta/
+javasharedresources/
+stack/
+*Google Drive

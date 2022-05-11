@@ -43,3 +43,4 @@
 	trustExitCode = true
 [init]
 	templateDir = /Users/jared/.config/git_template
+	defaultBranch = main
