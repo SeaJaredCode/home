@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ $(uname -o) != "Darwin" ]; then
+    echo "Not gonna work on $(uname -o) buddy... It's ok, it probably isn't needed."
+    exit
+fi
+
 # This is to regenerate all the links to gnubin utilities from brew
 # to allow simpler PATH management than each package individually
 for gnuutil in /usr/local/opt/**/libexec/gnubin/*; do

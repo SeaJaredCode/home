@@ -1,4 +1,14 @@
 #!/bin/sh
 
-joke=$(curl https://icanhazdadjoke.com 2> /dev/null || echo "Why can't we have nice things? Because the Internet is broken...")
-echo $joke
+# Only do colors in interactive mode
+if [ -t "0" ]; then
+  RED=$(tput setaf 1)
+  GREEN=$(tput setaf 2)
+  YELLOW=$(tput setaf 3)
+  NORMAL=$(tput sgr0)
+fi
+
+curl https://icanhazdadjoke.com 2> /dev/null || \
+	printf "${RED}Why can't we have nice things? Because the Internet is broken...${NORMAL}"
+
+printf "\n"

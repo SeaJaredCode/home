@@ -41,7 +41,7 @@ if which kubectl >> /dev/null; then
         fi
 
         shift
-        kubectl logs "$@" ${pod}
+        echo kubectl logs "$@" pod/${pod}
     }
     export -f klog
 

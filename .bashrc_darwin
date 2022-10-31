@@ -1,13 +1,16 @@
 #!/bin/bash
 
 [[ $OSTYPE == darwin* ]] || exit 0
+add_to_PATH --prepend ~/bin/local
 
 function _update_ps1() {
     PS1="$(powerline-shell $?)"
 }
 
 if [ "$TERM" != "linux" ]; then
-    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+    if which powerline-shell > /dev/null; then
+        PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+    fi
 fi
 
 function cdp() {

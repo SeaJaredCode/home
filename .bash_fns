@@ -129,3 +129,9 @@ fi
 if which kubectl >> /dev/null; then
     source ~/.kube_fns
 fi
+
+if which pip >> /dev/null; then
+    pip-uninstall() {
+        pip freeze | xargs pip uninstall -y
+    }
+fi
