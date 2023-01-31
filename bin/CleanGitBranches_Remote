@@ -1,7 +1,0 @@
-#!/bin/bash
-
-git branch -r --merged ${1-origin/master} origin/* |
-    grep -Ev 'dev|master|release/.*' |
-    tee >(xargs -I {} -n 1 echo `git log -1 --pretty='format:%H %aN %aD' {}` > ${2-deleted_refs.txt}) |
-    sed 's/origin\///g' |
-    xargs -I {} -n 1 echo git push -f origin :{}

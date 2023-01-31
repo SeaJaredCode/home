@@ -18,7 +18,7 @@ function cdp() {
 
     [ "$1" == "x" ] && projects_path="${projects_path}/extern/" && shift
 
-    projects=$(cd "${projects_path}"; find . -maxdepth 1 -type d | grep "$1" | cut -c 3- | grep '^[a-zA-Z0-9]')
+    projects=$(cd "${projects_path}"; find . -maxdepth 1 -type d | grep "$1" | cut -c 3- | grep '^[a-zA-Z0-9]' | sort)
     if [ $(echo "$projects" | wc -l) -eq 1 ]; then
         project="${projects}"
     else

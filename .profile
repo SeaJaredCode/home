@@ -7,8 +7,8 @@ if [ ! -d $SPF ]; then
     [ -z ${MSYSTEM+x} ] && sh $SPF/bootstrap.sh || printf "spf13 downloaded. Please complete installation using one of the bootstrapping scripts within ~/.spf13-vim-3\n"
 fi
 
-[ -s ~/.git-completion ] || curl -o .git-completion "https://github.com/git/git/blob/master/contrib/completion/git-completion.bash"
-[ -s ~/.git-prompt ] || curl -o .git-prompt "https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh"
+[ -s ~/.git-completion ] || curl -o .git-completion "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash"
+[ -s ~/.git-prompt ] || curl -o .git-prompt "https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh"
 
 case $OSTYPE in
     darwin*)

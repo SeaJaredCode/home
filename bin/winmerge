@@ -1,3 +1,0 @@
-#!/bin/sh
-echo winmerge $1 $2
-/c/Program\ Files\ \(x86\)/WinMerge/WinMergeU.exe -r -e -u -dl "Base" -dr "Merging" "$1" "$2"

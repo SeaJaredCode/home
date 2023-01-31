@@ -1,8 +1,0 @@
-#!/bin/sh
-
-BRANCH=`ssh -p 29418 gerrit 'gerrit query'  --format=TEXT change:$1 | grep "^\s*branch:" | sed 's/[^:]*:\s//'`
-
-if [ "$BRANCH" != "dev" ]; then
-  echo "$BRANCH"
-fi
-

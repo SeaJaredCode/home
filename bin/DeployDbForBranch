@@ -1,3 +1,0 @@
-#!/bin/sh
-export PATH=/c/windows/system32:$PATH
-powershell -NoProfile -File "c:\git\main\deployment\platforms\localhost\powershellscripts\deploydbforbranch.ps1" $@

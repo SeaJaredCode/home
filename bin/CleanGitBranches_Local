@@ -1,3 +1,0 @@
-#!/bin/sh
-
-git branch --merged ${1-origin/master} | grep "${2-tesla\/}" | xargs -r -n 1 echo git branch -d

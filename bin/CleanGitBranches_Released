@@ -1,5 +1,0 @@
-#!/bin/sh
-
-TAG=$(git tag -l | grep release | tail -3 | head -1)
-
-CleanGitBranches_Remote $TAG
