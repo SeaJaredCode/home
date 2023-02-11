@@ -7,6 +7,7 @@ fi
 
 # This is to regenerate all the links to gnubin utilities from brew
 # to allow simpler PATH management than each package individually
-for gnuutil in /usr/local/opt/**/libexec/gnubin/*; do
-    ln -sf $gnuutil ~/bin/local/
+for gnuutil in /opt/homebrew/opt/**/libexec/gnubin/*; do
+    ln -sf "$gnuutil" ~/bin/local/
 done
+

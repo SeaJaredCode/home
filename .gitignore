@@ -118,3 +118,4 @@ stack/
 .bloop/
 .dbt/
 .krew/
+bin/local/
