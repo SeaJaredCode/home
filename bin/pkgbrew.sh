@@ -21,16 +21,16 @@ check_cask() {
 }
 
 check_pkg cask || echo brew install cask
-
+brew tap homebrew/cask-fonts
 # Read the list of packages from the file
 while read package; do
   # Check if the package is a cask
   if [[ $package == cask:* ]]; then
     # Install the cask
-    check_cask "${package#cask:}" || brew install --cask "${package#cask:}"
+    check_cask "${package#cask:}" || exec brew install --cask "${package#cask:}"
   else
     # Install the package
-    check_pkg "$package" || brew install "$package"
+    check_pkg "$package" || exec brew install "$package"
   fi
 done < pkgbrew.txt
 

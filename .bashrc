@@ -10,7 +10,7 @@ fi
 force_color_prompt=yes
 
 # Set emacs editing mode
-set -o emacs
+set -o vi #emacs
 
 # Set cursor type
 echo -e -n "\x1b[\x35 q"
@@ -31,7 +31,7 @@ add_to_PATH ~/.local/bin
 
 # Source a local init file
 HOST=$(echo $HOSTNAME | cut -d '.' -f 1)
-if [ -e ~/.bashrc_$HOST ]; then source ~/.bashrc_$HOST >> /dev/null 2>&1; fi
+if [ -e ~/.bashrc_$HOST ]; then source ~/.bashrc_$HOST; fi
 
 # Set color theme
 if [ -d ~/.dircolors ]; then eval $(dircolors ~/.dircolors/dircolors.256dark); fi;

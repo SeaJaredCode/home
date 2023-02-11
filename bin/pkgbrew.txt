@@ -22,7 +22,6 @@ gnu-tar
 gnutls
 graphviz
 grep
-helm@2
 htop
 icu4c
 imath

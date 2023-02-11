@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/usr/local/opt/helm@2/bin/helm "$@"
+/opt/homebrew/opt/helm@2/bin/helm "$@"

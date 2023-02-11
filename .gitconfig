@@ -16,9 +16,13 @@
 [difftool "winmerge"]
     cmd = winmerge \"$LOCAL\" \"$REMOTE\"
 [merge]
-    tool = p4merge
+    tool = vimdiff
+    conflictstyle = diff3
 [mergetool]
     keepBackup = false
+[mergetool "vimdiff"]
+    trustExitCode = false
+    cmd = gitmergetool \"$BASE\" \"$REMOTE\" \"$LOCAL\" \"$MERGED\"
 [mergetool "p4merge"]
     trustExitCode = false
     cmd = p4merge -nb \"Common:\" -nl \"Your:\" -nr \"Their:\" -nm \"Resolved:\" \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"

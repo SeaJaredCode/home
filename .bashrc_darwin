@@ -13,6 +13,7 @@ if [ "$TERM" != "linux" ]; then
     fi
 fi
 
+
 function cdp() {
     projects_path=~/Projects/
 
@@ -32,25 +33,3 @@ function cdp() {
     unset projects_path projects project
 }
 
-install_meld() {
-    dl=meldmerge.dmg
-    base=${dl%.*}
-    echo running install for meld
-
-    curl -L -o ./$dl https://github.com/yousseb/meld/releases/latest/download/$dl
-    hdiutil mount -mountpoint $base $dl
-    sudo cp -R $base/$base.app /Applications/
-
-    hdiutil unmount $base
-    rm -r $dl
-}
-
-install_apps() {
-    for a in "$@"; do
-        if ! [ `which $a` ]; then
-            install_$a
-        fi
-    done
-}
-
-# install_apps meld
