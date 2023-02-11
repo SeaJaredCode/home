@@ -1,0 +1,9 @@
+Plug 'tpope/vim-surround'
+Plug 'easymotion/vim-easymotion'
+Plug 'preservim/nerdtree'
+Plug 'tpope/vim-commentary'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'vim-scripts/argtextobj.vim'
+Plug 'dbakker/vim-paragraph-motion'
+Plug 'michaeljsmith/vim-indent-object'
+

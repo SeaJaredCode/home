@@ -51,7 +51,6 @@ temp
 .docker/
 .emacs.d/
 .idea-build/
-.ideavimrc
 .ivy2/
 .kitchen/
 .packer.d/
@@ -116,3 +115,6 @@ Personal/
 javasharedresources/
 stack/
 *Google Drive
+.bloop/
+.dbt/
+.krew/
