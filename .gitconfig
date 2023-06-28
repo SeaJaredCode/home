@@ -2,7 +2,7 @@
 	name = Jared Stiff
 	email = jared@soundcommerce.com
 [core]
-    autocrlf = false
+	autocrlf = input
 	excludesfile = /Users/jared/.gitignore
     fscahce = true
 	ignorecase = true
@@ -16,13 +16,16 @@
 [difftool "winmerge"]
     cmd = winmerge \"$LOCAL\" \"$REMOTE\"
 [merge]
-    tool = vimdiff
+    tool = diffconflicts
     conflictstyle = diff3
 [mergetool]
     keepBackup = false
+[mergetool "diffconflicts"]
+    cmd = diffconflicts vim \"BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+    trustExitCode=true
+    keepBackup=false
 [mergetool "vimdiff"]
-    trustExitCode = false
-    cmd = gitmergetool \"$BASE\" \"$REMOTE\" \"$LOCAL\" \"$MERGED\"
+    layout = "(LOCAL,BASE,REMOTE)/MERGED"
 [mergetool "p4merge"]
     trustExitCode = false
     cmd = p4merge -nb \"Common:\" -nl \"Your:\" -nr \"Their:\" -nm \"Resolved:\" \"$BASE\" \"$LOCAL\" \"$REMOTE\" \"$MERGED\"

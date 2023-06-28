@@ -20,8 +20,7 @@ cecho() {
           *) local text="$1";;
     esac
 
-    [ -z "$text"  ] && local text="$color$2${code}0m"
-    echo -e "$text"
+    print "$color%s$code0m" "$text"
 }
 
 if [ $LOCAL_REF != $REMOTE_REF  ]
@@ -33,7 +32,7 @@ fi
 if [ $CURRENT_BRANCH == $UPDATE_BRANCH ]
 then
     cecho g "Resetting $UPDATE_BRANCH to origin/$UPDATE_BRANCH"
-    git reset --hard origin/$UPDATE_BRANCH
+    git pull origin/$UPDATE_BRANCH
 else
     cecho g "Checking out $UPDATE_BRANCH"
     git checkout -B $UPDATE_BRANCH origin/$UPDATE_BRANCH

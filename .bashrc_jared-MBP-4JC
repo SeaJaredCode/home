@@ -1,0 +1,31 @@
+[ -x /opt/homebrew/bin/brew ] && eval $(/opt/homebrew/bin/brew shellenv)
+
+gcloud_bin=$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
+source $gcloud_bin/path.bash.inc
+
+printf "Installing completions..."
+mono=~/Projects/mono
+[ -f "$mono"/pants ] && source <($mono/pants -f)
+[ -f ~/.bazel/bin/bazel-complete.bash ] && source ~/.bazel/bin/bazel-complete.bash
+[ -f "$mono"/bzl ] && source <($mono/bzl -f) && source <($mono/bzl -c)
+
+source $(brew --prefix)/etc/bash_completion
+source <(kubectl completion bash)
+source <(helm completion bash)
+source "$gcloud_bin"/completion.bash.inc
+printf "Done!\n"
+unset gcloud_bin mono
+
+export CLOUDSDK_PYTHON=python3
+
+if [ $(uname -p) == "arm" ]; then
+    export npm_config_target_arch=x64
+fi
+
+# Actually, use sdkman to set all managed versions (java)
+source ~/.sdkman/bin/sdkman-init.sh
+
+# python stuff
+add_to_PATH ~/.pyenv/shims
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"

@@ -17,6 +17,8 @@
     co = checkout
     cm = checkout -m
     cp = cherry-pick
+    cpa = cherry-pick --abort
+    cpc = cherry-pick --continue
     cb = "!f() {\
             b=$(find $(git rev-parse --git-dir)/refs/remotes/origin \\( -name master -o -name main \\) -printf "%f\n");\
             git checkout -b $1 origin/$b;\
@@ -88,3 +90,28 @@
                 ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | \
                 column -ts'|'; \
         };r"
+    history = "!r() {\
+        index=$((${1:-10}+1)); \
+        git reflog | \
+        grep \"checkout: moving from\" | \
+        cut -d ' ' -f 8 | \
+        sed \"${index}q\" | \
+        nl -v0 | \
+        sed '1s/ 0\t/ -\t/'; \
+        };r"
+    back = "!r() {\
+        index=$((${1:-0}+1)); \
+        branch=$(git reflog | \
+        grep \"checkout: moving from\" | \
+        cut -d ' ' -f 8 | \
+        sed \"${index:-1}q;d\"); \
+        git checkout $branch; \
+        };r"
+    prev = "!r() {\
+        branch=$(git reflog | \
+        grep \"checkout: moving from\" | \
+        cut -d ' ' -f 8 | \
+        sed '2q;d'); \
+        git checkout $branch; \
+        };r"
+

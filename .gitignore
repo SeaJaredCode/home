@@ -119,3 +119,10 @@ stack/
 .dbt/
 .krew/
 bin/local/
+.bazel-deps-cache/
+.dotty_history
+.ideanotes/
+.nbprofiler/
+.netrc_works
+.slang_history
+.zcompdump

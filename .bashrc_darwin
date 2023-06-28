@@ -3,8 +3,20 @@
 [[ $OSTYPE == darwin* ]] || exit 0
 add_to_PATH --prepend ~/bin/local
 
+function _find_powerline() ( 
+    cd ~
+    if which pyenv > /dev/null; then
+        pyenv which powerline-shell
+    else
+        powerline-shell
+    fi
+)
+
+export POWERLINE_SHELL=$(_find_powerline)
+
+echo "Powerline shell is at: $POWERLINE_SHELL"
 function _update_ps1() {
-    PS1="$(powerline-shell $?)"
+    PS1="$($POWERLINE_SHELL $?)"
 }
 
 if [ "$TERM" != "linux" ]; then
