@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if which pip >> /dev/null; then
+    pip-uninstall() {
+        pip freeze | xargs pip uninstall -y
+    }
+fi
+

@@ -1,6 +1,5 @@
 !bin
 *.exe
-.bash_history
 .cache
 .config
 .dbus-keyrings
@@ -18,7 +17,6 @@ temp
 .ca-client/
 .dircolors/
 .chef/
-.irb-history
 .rvm/
 .DS_Store
 .Trash/
@@ -110,7 +108,6 @@ Personal/
 .nvm/
 .pyenv/
 .zsh_*
-.node_repl_history
 .volta/
 javasharedresources/
 stack/
@@ -120,9 +117,9 @@ stack/
 .krew/
 bin/local/
 .bazel-deps-cache/
-.dotty_history
 .ideanotes/
 .nbprofiler/
 .netrc_works
-.slang_history
 .zcompdump
+.*_history
+.bsp/

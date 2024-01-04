@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+# Docker functions
+if which docker >> /dev/null; then
+    dsh() {
+        image=$1
+            shift
+            docker run -it $image /bin/sh "$@"
+    }
+
+    dash() {
+        image=$1
+            shift
+            docker run -it $image /bin/bash "$@"
+    }
+
+    drun() {
+        docker run "$@"
+    }
+
+    drm() {
+        docker image rm -f $1
+    }
+
+    dmake() {
+        docker build . -t $1
+    }
+
+    export -f dsh dash drun drm dmake
+fi;
+

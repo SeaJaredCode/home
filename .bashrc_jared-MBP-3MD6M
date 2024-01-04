@@ -4,7 +4,6 @@ source $gcloud_bin/path.bash.inc
 
 printf "Installing completions..."
 mono=~/Projects/mono
-[ -f "$mono"/sc ] && source <($mono/sc -f) >> /dev/null 2>&1
 [ -f "$mono"/pants ] && source <($mono/pants -f)
 [ -f ~/.bazel/bin/bazel-complete.bash ] && source ~/.bazel/bin/bazel-complete.bash
 [ -f "$mono"/bzl ] && source <($mono/bzl -f) && source <($mono/bzl -c)

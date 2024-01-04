@@ -12,6 +12,14 @@
     st = status
     ci = commit
     cin = commit --no-edit
+    un = "!f() {\
+            git u; \
+            git can; \
+        };f"
+    unp = "!f() { \
+            git un; \
+            git yolo; \
+        }; f"
     ca = commit --amend
     can = commit --amend --no-edit
     co = checkout
@@ -40,7 +48,7 @@
     gdiff = difftool -g -d
     gwdiff = difftool --tool=winmerge -d
     wdiff = difftool --tool=winmerge
-    yolo = push -f
+    yolo = push --force-with-lease
     rpm = rebase --preserve-merges
     rev = "!f() {\
             gerrit_push_review $1; \
@@ -100,7 +108,7 @@
         sed '1s/ 0\t/ -\t/'; \
         };r"
     back = "!r() {\
-        index=$((${1:-0}+1)); \
+        index=$((${1:-1}+1)); \
         branch=$(git reflog | \
         grep \"checkout: moving from\" | \
         cut -d ' ' -f 8 | \
@@ -114,4 +122,13 @@
         sed '2q;d'); \
         git checkout $branch; \
         };r"
+    yd = "!r() {\
+        ydiff "$@"; \
+        };r"
+    yds = "!r() {\
+        ydiff -s -w 0 "$@"; \
+    };r"
+    showy = "!r() {\
+        ydiff -ls -w 0 "$@"; \
+    };r"
 

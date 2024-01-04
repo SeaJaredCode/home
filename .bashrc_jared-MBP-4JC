@@ -5,9 +5,10 @@ source $gcloud_bin/path.bash.inc
 
 printf "Installing completions..."
 mono=~/Projects/mono
-[ -f "$mono"/pants ] && source <($mono/pants -f)
+add_to_PATH "$mono/bin"
 [ -f ~/.bazel/bin/bazel-complete.bash ] && source ~/.bazel/bin/bazel-complete.bash
-[ -f "$mono"/bzl ] && source <($mono/bzl -f) && source <($mono/bzl -c)
+[ -f "$mono"/bzl ] && pushd "$mono" > /dev/null && source <("$mono"/bzl -f 2> /dev/null) && source <("$mono"/bzl -c) && popd > /dev/null
+[ -f "$mono/bin/argocd-iap-wrapper.sh" ] && source "$mono/bin/argocd-iap-wrapper.sh"
 
 source $(brew --prefix)/etc/bash_completion
 source <(kubectl completion bash)
@@ -29,3 +30,14 @@ source ~/.sdkman/bin/sdkman-init.sh
 add_to_PATH ~/.pyenv/shims
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+
+_mtrbin=~/bin/mtr
+if [ -L $_mtrbin ] && which $(greadlink -q $_mtrbin) >> /dev/null; then
+    check() {
+        if [ $(id -u) -ne 0 ]; then
+            sudo ~/bin/mtr google.com
+        fi
+    }
+fi
+unset _mtrbin
+

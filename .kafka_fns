@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+if [ -d /var/kafka ] || [ -d /opt/kafka  ]; then
+    kbin() {
+        kpath=/opt/kafka/current/bin
+        kscripts=/Users/jared/Projects/mono/utils/kafka
+
+        binary=$1
+        shift
+
+        case $binary in
+        ls)
+            find $kscripts $kpath -type f -depth 1 -perm +111 | xargs basename
+            ;;
+        *)
+            export PATH=$kscripts:$kpath:$PATH
+            $binary "$@"
+            ;;
+        esac
+    }
+
+    export -f kbin
+fi
+
+
+if [ -d /var/kafka ] || [ -d /opt/kafka  ]; then
+    kbin() {
+        kpath=/opt/kafka/current/bin
+        kscripts=/Users/jared/Projects/mono/utils/kafka
+
+        binary=$1
+        shift
+
+        case $binary in
+        ls)
+            find $kscripts $kpath -type f -depth 1 -perm +111 | xargs basename
+            ;;
+        *)
+            export PATH=$kscripts:$kpath:$PATH
+            $binary "$@"
+            ;;
+        esac
+    }
+
+    export -f kbin
+fi
+
+

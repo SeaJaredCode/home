@@ -14,7 +14,7 @@ function _find_powerline() (
 
 export POWERLINE_SHELL=$(_find_powerline)
 
-echo "Powerline shell is at: $POWERLINE_SHELL"
+# echo "Powerline shell is at: $POWERLINE_SHELL"
 function _update_ps1() {
     PS1="$($POWERLINE_SHELL $?)"
 }

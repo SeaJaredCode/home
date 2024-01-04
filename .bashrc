@@ -31,7 +31,11 @@ add_to_PATH ~/.local/bin
 
 # Source a local init file
 HOST=$(echo $HOSTNAME | cut -d '.' -f 1)
-if [ -e ~/.bashrc_$HOST ]; then source ~/.bashrc_$HOST; fi
+if [ -e ~/.bashrc_$HOST ]; then
+    source ~/.bashrc_$HOST
+else
+    echo "No bashrc specific to this host [$HOST] found!"
+fi
 
 # Set color theme
 if [ -d ~/.dircolors ]; then eval $(dircolors ~/.dircolors/dircolors.256dark); fi;
@@ -65,4 +69,10 @@ if [ -d $HOME/.nvm ]; then
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
+# Source function additions (after everything else has been initialized)
+printf "Addng extension functions..."
+for file in $(find . -maxdepth 1 -type f -name '.*fns' -not -name '.bash_fns'); do
+    source "$file"
+done
+printf "Done!\n"
 

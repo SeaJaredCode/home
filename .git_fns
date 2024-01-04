@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+if which git >> /dev/null; then
+    __git_exe="$(which git)"
+
+    _aliased_git() {
+        unset __cmd
+        case "$1" in
+          add)
+            __cmd="add -v "
+            shift 1
+            ;;
+          rm)
+            __cmd="rm --cached "
+            shift 1
+            ;;
+        esac
+
+        "$__git_exe" $__cmd"$@"
+    }
+
+    alias git='_aliased_git'
+fi
+
