@@ -6,8 +6,14 @@
     "time",
     "ssh",
     "cwd",
+    {
+        "type": "stdout",
+        "command": ["bash", "-c", "basename \"$(git rev-parse --show-toplevel 2> /dev/null)\""],
+        "bg_color": 25,
+        "fg_color": 15
+
+    },
     "git",
-    "aws_profile",
     "jobs",
     "virtual_env",
     "newline",
@@ -15,5 +21,13 @@
     "hostname",
     "root"
   ],
+  "cwd": {
+      "max_depth": 3,
+      "max_dir_size": 8,
+      "full_cwd": true
+  },
+  "vcs": {
+    "show_symbol": true
+  },
   "theme": "default"
 }

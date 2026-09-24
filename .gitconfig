@@ -3,9 +3,10 @@
 	email = SeaJaredCode@users.noreply.github.com
 [core]
 	autocrlf = input
-	excludesfile = /Users/jared/.gitignore
+	excludesFile = /Users/jared/.gitignore-global
     fscahce = true
 	ignorecase = true
+	precomposeunicode = true
 [include]
     path=~/.gitalias
 [diff]
@@ -52,3 +53,11 @@
 [init]
 	templateDir = /Users/jared/.config/git_template
 	defaultBranch = main
+[status]
+    showUntrackedFiles = all
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

@@ -19,29 +19,48 @@ function _update_ps1() {
     PS1="$($POWERLINE_SHELL $?)"
 }
 
+update_iterm2_tab_title() {
+  local repo_name
+  repo_name=$(git rev-parse --show-toplevel 2>/dev/null | xargs -I{} basename {} || echo "No Repo")
+  echo -ne "\033]0;${repo_name}\007"
+}
+
 if [ "$TERM" != "linux" ]; then
     if which powerline-shell > /dev/null; then
-        PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+        # Only splice in the inherited PROMPT_COMMAND if there is one -- an empty
+        # $PROMPT_COMMAND used to expand to a bare ';' and made every prompt a
+        # syntax error outside terminals that preset it (e.g. Warp).
+        PROMPT_COMMAND="_update_ps1${PROMPT_COMMAND:+; $PROMPT_COMMAND}; update_iterm2_tab_title"
     fi
 fi
 
 
+function prompt_dir() {
+  local projects_path="$1"
+  local filter="${2:-.}"
+
+  local projects=$(cd "${projects_path}"; find . -maxdepth 1 -type d | grep "$filter" | cut -c 3- | grep '^[a-zA-Z0-9]' | sort)
+  local -a proj_array=($projects)
+  if [ ${#proj_array[@]} -eq 1 ]; then
+    project="${proj_array[0]}"
+  else
+    PS3="Choose a project: "
+    select project in "${proj_array[@]}"; do
+      break
+    done
+  fi
+
+  cd "${projects_path}/${project}"
+}
+
 function cdp() {
-    projects_path=~/Projects/
+  local projects_path=~/Projects
 
-    [ "$1" == "x" ] && projects_path="${projects_path}/extern/" && shift
+  [ "$1" == "x" ] && projects_path="${projects_path}/extern/" && shift
+  prompt_dir "${projects_path}" "$1"
+}
 
-    projects=$(cd "${projects_path}"; find . -maxdepth 1 -type d | grep "$1" | cut -c 3- | grep '^[a-zA-Z0-9]' | sort)
-    if [ $(echo "$projects" | wc -l) -eq 1 ]; then
-        project="${projects}"
-    else
-        PS3="Choose a project: "
-        select project in $projects; do
-            break
-        done
-    fi
-
-    cd "${projects_path}/${project}"
-    unset projects_path projects project
+function cdx {
+    prompt_dir ~/Projects/play "$1"
 }
 

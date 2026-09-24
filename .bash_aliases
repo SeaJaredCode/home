@@ -9,9 +9,9 @@ case $OSTYPE in
         DF='gdf'
 
         alias dircolors='gdircolors'
-        alias cdgit='cd ~/Projects'
+        alias cdg='cd ~/Projects'
         alias cdm='cd ~/Projects/mono'
-        alias cdr='cd "$(git rev-parse --show-toplevel 2>> /dev/null)"'
+        alias cdr='cd "$(get_git_root)"'
         ;;
     msys)
         alias cdmain='cd /c/git/main'
@@ -50,3 +50,39 @@ alias gource="gource --auto-skip-seconds 0.1 --seconds-per-day 0.5 --camera-mode
 [ -d /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/ ] && alias code="/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code"
 alias yd="ydiff -s -w0"
 
+# Claude Code
+# Core launcher: standard flags (bypass perms + Chrome + remote control) plus any args.
+# (--dangerously-skip-permissions already bypasses everything, so no --permission-mode.)
+c2() {
+    claude --dangerously-skip-permissions --chrome --remote-control "$@"
+}
+# Safer variant: auto permission mode instead of a full bypass.
+c2a() {
+    claude --permission-mode auto --chrome --remote-control "$@"
+}
+
+# Codex CLI: equivalent unrestricted launcher for externally sandboxed sessions.
+cx() {
+    codex --dangerously-bypass-approvals-and-sandbox "$@"
+}
+
+# catwrangler: cd into the project (persists), set AWS + breakglass-shim PATH
+# for the claude process only, then launch via c2. Extra args pass through.
+cw() {
+    cd /Volumes/Projects/catwrangler || return
+    (
+        export PATH="/Volumes/Projects/catwrangler/.claude/breakglass/shims:$PATH"
+        export AWS_PROFILE=cw AWS_REGION=us-east-1
+        c2 "$@"
+    )
+}
+
+# CatWrangler through Codex: same project, AWS profile, and break-glass shim setup as cw.
+cwx() {
+    cd /Volumes/Projects/catwrangler || return
+    (
+        export PATH="/Volumes/Projects/catwrangler/.claude/breakglass/shims:$PATH"
+        export AWS_PROFILE=cw AWS_REGION=us-east-1
+        cx "$@"
+    )
+}

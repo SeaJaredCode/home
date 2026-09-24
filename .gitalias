@@ -6,6 +6,7 @@
     bC = branch -r --contains
     bcr = branch -r --contains
     f = fetch
+    fp = fetch --prune
     fa = fetch --all --prune
     m = merge
     s = status
@@ -27,10 +28,13 @@
     cp = cherry-pick
     cpa = cherry-pick --abort
     cpc = cherry-pick --continue
-    cb = "!f() {\
-            b=$(find $(git rev-parse --git-dir)/refs/remotes/origin \\( -name master -o -name main \\) -printf "%f\n");\
-            git checkout -b $1 origin/$b;\
-        };f"
+    cb = "!f() { \
+        if git rev-parse --verify origin/main >/dev/null 2>&1; then \
+            git checkout -b \"$1\" origin/main; \
+        else \
+            git checkout -b \"$1\" origin/master; \
+        fi \
+    }; f"
     cbr = "!f() {\
             gerrit_create_branch origin $1 master;\
         };f"
@@ -65,13 +69,18 @@
     l = !do_git_log
     ri = "!f() {\
             if [ -z "$1" ]; then \
-                git rebase -i origin/master; \
+                if git rev-parse --verify origin/main >/dev/null 2>&1; then \
+                    git rebase -i origin/main; \
+                else \
+                    git rebase -i origin/master; \
+                fi \
             else \
                 git rebase -i "$@"; \
             fi; \
         };f"
     rc = rebase --continue
     ra = rebase --abort
+    mc = merge --continue
     pex = "!f() {\
             if [ -z "$1" ]; then \
                 echo "Usage: pex NUM_COMMITS"; \
@@ -84,15 +93,16 @@
     mt = mergetool
     why = check-ignore --verbose --non-matching
     recent = "!r() {\
-            refbranch=$1 \
+            refbranch=$1; \
             count=$2; \
+            head_branch=$(if git rev-parse --verify origin/main >/dev/null 2>&1; then echo "main"; else echo "master"; fi); \
             git for-each-ref --sort=-committerdate refs/heads \
                 --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' \
                 --color=always --count=${count:-20} | \
                 while read line; do \
                     branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); \
-                    ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); \
-                    behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); \
+                    ahead=$(git rev-list --count \"${refbranch:-origin/$head_branch}..${branch}\"); \
+                    behind=$(git rev-list --count \"${branch}..${refbranch:-origin/$head_branch}\"); \
                     colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; \
                 done | \
                 ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | \
@@ -131,4 +141,6 @@
     showy = "!r() {\
         ydiff -ls -w 0 "$@"; \
     };r"
+    canu = "!git u && git can"
+    canup = "!git u && git can && git yolo"
 

@@ -23,7 +23,15 @@ case $OSTYPE in
         ;;
 esac
 
+# GUI applications do not inherit an interactive terminal's PATH. Keep
+# Homebrew in the login environment so tools that capture the user shell
+# profile (including Codex) resolve the current Homebrew-managed binaries.
+if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 [ -r $HOME/.bashrc ] && source $HOME/.bashrc
 
 
-source /Users/jared/.docker/init-bash.sh || true # Added by Docker Desktop
+# Added by Antigravity
+export PATH="/Users/jared/.antigravity/antigravity/bin:$PATH"

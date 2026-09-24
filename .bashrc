@@ -1,5 +1,13 @@
 [[ $- == *i* ]] || return
 
+# Line editor (ble.sh): gives bash autosuggestions, syntax highlighting and a
+# real vi mode. Must be sourced early with --noattach and attached at the very
+# end of this file. Skipped under Warp, which drives its own input editor and
+# never invokes readline.
+if [[ $TERM_PROGRAM != WarpTerminal && -f ~/.local/share/blesh/ble.sh ]]; then
+    source ~/.local/share/blesh/ble.sh --noattach
+fi
+
 # In case we got here without profile being loaded...
 if [ -z $_PROFILE ]; then
     printf "Profile not loaded as expected. Trying again." 1>&2
@@ -41,7 +49,7 @@ fi
 if [ -d ~/.dircolors ]; then eval $(dircolors ~/.dircolors/dircolors.256dark); fi;
 
 has_git=$(which git >> /dev/null && echo $?)
-[ $has_git ] && [ -f ~/.git-completion ] && . ~/.git-completion
+[ $has_git ] && [ -f ~/.git-completion ] && . ~/.git-completion && . ~/.git_fns
 
 case $OSTYPE in
 darwin*)
@@ -71,8 +79,14 @@ fi
 
 # Source function additions (after everything else has been initialized)
 printf "Addng extension functions..."
-for file in $(find . -maxdepth 1 -type f -name '.*fns' -not -name '.bash_fns'); do
+for file in $(find ~ -maxdepth 1 -type f -name '.*fns' -not -name '.bash_fns'); do
     source "$file"
 done
 printf "Done!\n"
 
+# Attach ble.sh last, once completions and the prompt are fully set up.
+if [[ ${BLE_VERSION-} ]]; then
+    ble-import -d integration/fzf-completion
+    ble-import -d integration/fzf-key-bindings
+    ble-attach
+fi

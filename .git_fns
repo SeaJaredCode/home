@@ -20,5 +20,23 @@ if which git >> /dev/null; then
     }
 
     alias git='_aliased_git'
+
+    get_git_root() {
+        if [ "$(git rev-parse --is-inside-git-dir)" == "true" ]; then
+            echo "$(git rev-parse --git-dir)/.."
+        else
+            echo "$(git rev-parse --show-toplevel 2>> /dev/null)"
+        fi
+    }
+
+    # Set up shell environment for "this" repository...
+    # Note: This may be idempotent for a particular git repo, but it will not "clean" the
+    # env if switching between repos, so use 1 shell:1 repo.
+    git_env() {
+        export git_root="$(get_git_root)"
+        if [ -d "$git_root"/bin ]; then
+            add_to_PATH "$git_root"/bin
+        fi
+    }
 fi
 

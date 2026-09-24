@@ -1,4 +1,5 @@
 "Bundle 'edkolev/tmuxline.vim'
+Plugin 'mg979/vim-visual-multi'
 Bundle 'guns/vim-sexp'
 Bundle 'tpope/vim-sexp-mappings-for-regular-people'
 Bundle 'tpope/vim-fireplace'

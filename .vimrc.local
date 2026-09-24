@@ -63,6 +63,10 @@ let g:EasyMotion_startofline = 0 " keep cursor column when JK motion
 if &term == 'xterm-256color' || &term == 'screen-256color'
     let &t_SI = "\<Esc>[5 q"
     let &t_EI = "\<Esc>[1 q"
+
+    set ttimeout
+    set ttimeoutlen=1
+    set ttyfast
 endif
 
 if exists('$TMUX')
